@@ -1,5 +1,8 @@
+using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Web
 {
@@ -16,10 +19,11 @@ namespace Web
             builder.Services.AddControllersWithViews();
 
             // Configure the connection string
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Add services UnitOfWork
+            builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 
 
             var app = builder.Build();
