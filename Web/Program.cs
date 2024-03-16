@@ -2,7 +2,6 @@ using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Web
 {
