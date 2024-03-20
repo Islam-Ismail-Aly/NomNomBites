@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 
 namespace Core.Models
 {
-    public class CustomerFoods
+    public class CustomerOrderPayment
     {
-        [ForeignKey("Food")]
-        public int FoodId { get; set; }
-        public virtual Food Food { get; set; }
+        [ForeignKey("Order")]
+        public int OrderId { get; set; }
+        public virtual Order Order { get; set; }
 
         [ForeignKey("Customer")]
         public int CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
-        public int Quantity { get; set; }
-        public decimal TotalPrice { get; set; }
+        
+        [ForeignKey("Payment")]
+        public int PaymentId { get; set; }
+        public virtual Payment Payment { get; set; }
     }
 }

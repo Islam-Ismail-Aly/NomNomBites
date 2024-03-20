@@ -22,5 +22,7 @@ namespace Core.Models
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
+        public virtual ICollection<CustomerFoods> CustomerFoods { get; set; }
+        public virtual ICollection<FoodOrders> FoodOrders { get; set; }
     }
 }

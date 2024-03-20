@@ -21,6 +21,11 @@ namespace Web.Controllers
         public IActionResult About()
         {
             return View();
+        } 
+        
+        public IActionResult Cart()
+        {
+            return View();
         }
 
         public IActionResult Privacy()

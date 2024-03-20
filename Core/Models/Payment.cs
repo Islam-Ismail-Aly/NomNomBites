@@ -12,14 +12,6 @@ namespace Core.Models
     {
         [Key]
         public int Id { get; set; }
-
-        [ForeignKey("Order")]
-        public int OrderId { get; set; }
-        public virtual Order Order { get; set; }
-
-        [ForeignKey("Customer")]
-        public int CustomerId { get; set; }
-        public virtual Customer Customer { get; set; }
         public decimal PaymentAmount { get; set; }
         public string PaymentMethod { get; set; }
         public int TransactionStatus { get; set; }

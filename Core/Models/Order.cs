@@ -17,5 +17,6 @@ namespace Core.Models
         [ForeignKey("Customer")]
         public int CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
+        public virtual ICollection<FoodOrders> FoodOrders { get; set; }
     }
 }
