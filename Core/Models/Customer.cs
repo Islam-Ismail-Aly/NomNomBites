@@ -16,7 +16,7 @@ namespace Core.Models
         public DateTime CreationDate { get; set; }
 
         [ForeignKey("ApplicationUser")]
-        public Guid ApplicationUserId { get; set; }
+        public string ApplicationUserId { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
