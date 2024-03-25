@@ -1,6 +1,8 @@
 using Core.Interfaces;
+using Core.Models;
 using Infrastructure.Data;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Web
@@ -20,6 +22,10 @@ namespace Web
             // Configure the connection string
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Add services Identity
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                        .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add services UnitOfWork
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
@@ -43,9 +49,18 @@ namespace Web
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                  name: "areas",
+                  pattern: "{area:exists}/{controller=Account}/{action=Login}/{id?}"
+                );
+
+                endpoints.MapControllerRoute(
+                  name: "default",
+                  pattern: "{controller=Home}/{action=Index}/{id?}"
+                );
+            });
 
             app.Run();
         }
