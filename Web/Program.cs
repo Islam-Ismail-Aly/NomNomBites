@@ -24,8 +24,16 @@ namespace Web
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services Identity
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                        .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                // Configure password requirements
+                options.Password.RequireDigit = false; // Requires a digit (0-9)
+                options.Password.RequireLowercase = false; // Requires a lowercase letter (a-z)
+                options.Password.RequireUppercase = false; // Requires an uppercase letter (A-Z)
+                options.Password.RequireNonAlphanumeric = false; // Does not require a non-alphanumeric character
+                options.Password.RequiredLength = 8; // Minimum required password length
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add services UnitOfWork
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));

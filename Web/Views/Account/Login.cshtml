@@ -1,4 +1,4 @@
-﻿@model Web.ViewModels.LoginViewModel
+﻿@model LoginViewModel
 
 @{
     ViewData["Title"] = "Login";
@@ -13,7 +13,7 @@
     <meta name="description" content="">
 
     <!-- favicon -->
-    <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/img/logo-1.png">
     <!-- google font -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
@@ -115,9 +115,14 @@
             return;
         }
 
+        event.preventDefault();
+
         $.ajax({
             type: 'POST',
-            url: '/Login',
+            url: '/Account/Login',
+            headers: {
+                RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // Include anti-forgery token
+            },
             data: {
                 Email: email,
                 Password: password,
@@ -130,7 +135,6 @@
                         title: 'Login Successfully',
                         text: 'Welcome to NomNom Bites.',
                     });
-                    // If login is successful, redirect to the home page
                     window.location.href = '/Home/Index';
                 } else {
                     // If login fails, show error message
@@ -142,7 +146,6 @@
                 }
             },
             error: function (xhr, status, error) {
-                // If there's an error with the AJAX request, show generic error message
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
