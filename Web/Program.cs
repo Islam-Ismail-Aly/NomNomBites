@@ -2,8 +2,10 @@ using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Data;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.Utilities;
 
 namespace Web
 {
@@ -38,6 +40,20 @@ namespace Web
             // Add services UnitOfWork
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Admin/Account/Login";
+                options.LogoutPath = "/Admin/Account/Logout";
+                options.AccessDeniedPath = "/Admin/Account/AccessDenied";
+            });
+
+            builder.Services.AddAuthentication().AddCookie();
+
+            builder.Services.AddSession();
+
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddScoped<VisitorTracker>();
 
             var app = builder.Build();
 
@@ -49,6 +65,7 @@ namespace Web
                 app.UseHsts();
             }
 
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

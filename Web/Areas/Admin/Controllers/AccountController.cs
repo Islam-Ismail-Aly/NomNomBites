@@ -1,5 +1,6 @@
 ﻿using Core.Interfaces;
 using Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,21 +8,76 @@ using Web.Areas.Admin.ViewModels;
 
 namespace Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class AccountController : AdminBaseController
     {
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IUnitOfWork<VwUsers> _vwUsers;
         public AccountController
-            (RoleManager<IdentityRole> RoleManager, IUnitOfWork<VwUsers> vwUsers)
+            (RoleManager<IdentityRole> RoleManager, UserManager<ApplicationUser> UserManager, IUnitOfWork<VwUsers> vwUsers, 
+            SignInManager<ApplicationUser> signInManager)
         {
             _roleManager = RoleManager;
+            _userManager = UserManager;
             _vwUsers = vwUsers;
+            _signInManager = signInManager;
         }
 
+        
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdminLogin(LoginViewModel viewModel)
+        {
+            // Check if the provided model is valid
+            if (ModelState.IsValid)
+            {
+                // Find the user by email
+                ApplicationUser user = await _userManager.FindByNameAsync(viewModel.Email);
+
+                // if user exist
+                if (user != null)
+                {
+                    // Check if the provided password matches the user's password
+                    bool isValidPassword = await _userManager.CheckPasswordAsync(user, viewModel.Password);
+
+                    if (isValidPassword)
+                    {
+                        // Sign in the user
+                        await _signInManager.SignInAsync(user, viewModel.RememberMe);
+
+                        // Redirect to home index upon successful login
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Incorrect Email or Password!" });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Email not found" });
+                }
+            }
+
+            return RedirectToAction(nameof(Login));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(Login));
         }
 
         [HttpGet]
@@ -30,7 +86,7 @@ namespace Web.Areas.Admin.Controllers
             var model = new RolesViewModel
             {
                 NewRole = new NewRole(),
-                Roles = _roleManager.Roles.AsNoTracking().OrderBy(r => r.Name).ToList()
+                Roles = _roleManager.Roles.AsNoTracking().ToList()
             };
 
             return View(model);
@@ -99,7 +155,7 @@ namespace Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Users()
         {
-            return View(_vwUsers.Entity.GetAll());
+            return View(_vwUsers.Entity.GetAll().Where(vw => vw.Status));
         }
 
         public async Task<IActionResult> DeleteRole(string Id)
@@ -113,6 +169,13 @@ namespace Web.Areas.Admin.Controllers
             }
 
             return RedirectToAction(nameof(Roles));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

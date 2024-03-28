@@ -1,12 +1,15 @@
 ﻿using Core.Interfaces;
 using Core.Models;
-using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Web.Validators;
 using Web.ViewModels;
 
 namespace Web.Controllers
 {
+    [AllowAnonymous]
+    [AuthenticatedUsersAttribute]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -27,6 +30,7 @@ namespace Web.Controllers
         {
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

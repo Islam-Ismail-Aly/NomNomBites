@@ -1,4 +1,7 @@
-﻿<!-- header -->
+﻿@inject UserManager<ApplicationUser> _userManager
+@inject SignInManager<ApplicationUser> _signInManager
+
+<!-- header -->
 <div class="top-header-area" id="sticker">
     <div class="container">
         <div class="row">
@@ -46,12 +49,12 @@
                             </li>
                             <li>
                                 <div class="header-icons">
-                                    @if (User.Identity.IsAuthenticated)
+                                    @if (_signInManager.IsSignedIn(User))
                                     {
                                         <a class="shopping-cart" href="cart.html"><i class="fa fa-shopping-cart"></i></a>
                                         <a class="mobile-hide search-bar-icon" href="#"><i class="fa fa-search"></i></a>
-                                        <a class="welcome-msg"> Welcome, @User.Identity.Name.Substring(0, User.Identity.Name.IndexOf('@')) !</a>
-                                        <a asp-area="" asp-controller="Account" asp-Action="Logout" class="login-icon"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                                        <a class="welcome-msg"> Welcome, @((await _userManager.GetUserAsync(User)).Name)</a>
+                                        <a asp-controller="Account" asp-Action="Logout" class="login-icon"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
                                     }
                                     else
                                     {

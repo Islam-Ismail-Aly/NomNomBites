@@ -13,6 +13,7 @@ namespace Core.Models
         public string Email { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
+        public bool Status { get; set; }
         public DateTime CreationDate { get; set; }
         public string Role { get; set; }
     }

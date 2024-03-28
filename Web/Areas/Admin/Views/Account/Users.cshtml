@@ -61,21 +61,21 @@
                                                     @switch (user.Role)
                                                     {
                                                         case "Admin":
-                                                            <span class="badge badge-success d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 12px;">@user.Role</span>
+                                                            <span class="badge badge-success d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 13px;">@user.Role</span>
                                                             break;
                                                         case "Customer":
-                                                            <span class="badge badge-warning d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 12px;">@user.Role</span>
+                                                            <span class="badge badge-warning d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 13px;">@user.Role</span>
                                                             break;
                                                         default:
-                                                            <span class="badge badge-primary d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 12px;">@user.Role</span>
+                                                            <span class="badge badge-primary d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 13px;">@user.Role</span>
                                                             break;
                                                     }
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-info" onclick="Edit('@user.Id', '@user.Name')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <button type="button" class="btn btn-info btn-sm" onclick="Edit('@user.Id', '@user.Name')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                         Edit <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-danger" onclick="Delete('@user.Id')" value="Delete">
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="Delete('@user.Id')" value="Delete">
                                                         Delete <i class="fa fa-trash-o" aria-hidden="true"></i>
                                                     </button>
                                                 </td>
