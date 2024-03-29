@@ -29,5 +29,10 @@ namespace Infrastructure.UnitOfWork
         {
             _context.SaveChanges();
         }
+
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
     }
 }

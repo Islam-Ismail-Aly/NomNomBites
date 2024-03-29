@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Web.Areas.Admin.ViewModels;
 using Web.Utilities;
 
 namespace Web.Areas.Admin.Controllers
@@ -19,8 +18,8 @@ namespace Web.Areas.Admin.Controllers
         private readonly IUnitOfWork<Food> _unitOfWorkFood;
         private readonly IUnitOfWork<Category> _unitOfWorkCategory;
 
-        public HomeController(UserManager<ApplicationUser> userManager, 
-            VisitorTracker visitorTracker, IUnitOfWork<Order> unitOfWorkOrder, 
+        public HomeController(UserManager<ApplicationUser> userManager,
+            VisitorTracker visitorTracker, IUnitOfWork<Order> unitOfWorkOrder,
             IUnitOfWork<Food> unitOfWorkFood, IUnitOfWork<Category> unitOfWorkCategory)
         {
             _userManager = userManager;
@@ -44,18 +43,6 @@ namespace Web.Areas.Admin.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult Category()
-        {
-            var categories = _unitOfWorkCategory.Entity.GetAll();
-            var categoryViewModels = categories.Select(category => new CategoryViewModel
-            {
-                CategoryId = category.Id,
-                CategoryTitle = category.Title,
-                IsAvailable = category.IsAvailable
-            });
 
-            return View(categoryViewModels);
-        }
     }
 }

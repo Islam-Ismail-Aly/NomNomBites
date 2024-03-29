@@ -55,7 +55,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="index3.html" class="nav-link">Home</a>
+                    <a asp-action="Index" asp-controller="Home" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="#" class="nav-link">Contact</a>
@@ -188,7 +188,7 @@
                         <!-- Add icons to the links using the .nav-icon class
                              with font-awesome or any other icon font library -->
                         <li class="nav-item menu-open">
-                            <a href="/" class="nav-link active">
+                            <a href="#" class="nav-link active">
                                 <p>
                                     Users Management
                                     <i class="right fas fa-angle-left"></i>
@@ -197,13 +197,15 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a asp-controller="Account" asp-action="Users" class="nav-link">
-                                        <i class="fa fa-check-circle" aria-hidden="true" style="font-size: 14px;"></i>
+                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        &nbsp;
                                         <p> Users</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a asp-controller="Account" asp-action="Roles" class="nav-link">
-                                        <i class="fa fa-check-circle" aria-hidden="true" style="font-size: 14px;"></i>
+                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        &nbsp;
                                         <p> Roles</p>
                                     </a>
                                 </li>
@@ -218,12 +220,23 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a asp-controller="Home" asp-action="Category" class="nav-link">
-                                        <i class="fa fa-check-circle" aria-hidden="true" style="font-size: 14px;"></i>
-                                        <p> Categories</p>
+                                    <a asp-controller="Food" asp-action="Food" class="nav-link">
+                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        &nbsp;
+                                        <p> Foods</p>
                                     </a>
                                 </li>
                             </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a asp-controller="Category" asp-action="Category" class="nav-link">
+                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        &nbsp;
+                                        <p> Categories</p>
+                                    </a>
+                                </li>
+                            </ul>          
+                         
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -283,6 +296,7 @@
     <!-- ./wrapper -->
     <!-- jQuery -->
     <script src="~/Admin/plugins/jquery/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- jQuery UI 1.11.4 -->
     <script src="~/Admin/plugins/jquery-ui/jquery-ui.min.js"></script>
@@ -340,3 +354,29 @@
     @await RenderSectionAsync("Scripts", required: false);
 </body>
 </html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var navLinks = document.querySelectorAll('li.nav-item a.nav-link');
+
+        function isActiveLink(link) {
+            return link.href === window.location.href;
+        }
+
+        navLinks.forEach(function (link) {
+
+            if (isActiveLink(link)) {
+                link.classList.add('active', 'text-primary');
+            }
+
+            link.addEventListener("click", function () {
+
+                navLinks.forEach(function (navLink) {
+                    if (navLink === 'nav-link active') {
+                        navLink.classList.remove('active', 'text-primary');
+                    }
+                });
+            });
+        });
+    });
+
+</script>
