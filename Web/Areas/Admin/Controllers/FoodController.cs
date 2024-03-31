@@ -36,10 +36,9 @@ namespace Web.Areas.Admin.Controllers
                 Description = food.Description,
                 Price = food.Price,
                 Rating = food.Rating,
-                Image = food.Image,
+                //Image = food.Image,
                 IsAvailable = food.IsAvailable,
-                CategoryId = food.CategoryId,
-                CategoryTitle = food.Category.Title
+                CategoryTitle = food.Category.Title,
             }).ToList();
 
             ViewBag.Categories = _unitOfWorkCategory.Entity.GetAll().ToList();
@@ -54,6 +53,34 @@ namespace Web.Areas.Admin.Controllers
             _unitOfWorkFood.Save();
 
             return RedirectToAction(nameof(FoodController.Food), nameof(Food));
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditFood(FoodViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                Food food = new Food
+                {
+                    Id = viewModel.Id,
+                    Title = viewModel.Title,
+                    Description = viewModel.Description,
+                    Price = viewModel.Price,
+                    //Image = viewModel.Image,
+                    Image = new byte[0],
+                    Rating = viewModel.Rating,
+                    IsAvailable = viewModel.IsAvailable,
+                    CategoryId = viewModel.CategoryId,
+                };
+
+                _unitOfWorkFood.Entity.Update(food);
+                _unitOfWorkFood.Save();
+
+                return RedirectToAction(nameof(FoodController.Food), nameof(Food));
+            }
+
+            return View(viewModel);
         }
     }
 }

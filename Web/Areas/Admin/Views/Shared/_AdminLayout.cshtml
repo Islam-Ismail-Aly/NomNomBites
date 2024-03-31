@@ -43,6 +43,10 @@
 
     <!-- Sweet Alert -->
     <link rel="stylesheet" href="~/Admin/plugins/sweetalert2/sweetalert2.min.css">
+
+    <!-- Toastr -->
+    <link href="~/lib/toastr.js/toastr.min.css" rel="stylesheet" />
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
@@ -229,6 +233,15 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
+                                    <a asp-controller="Order" asp-action="Orders" class="nav-link">
+                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        &nbsp;
+                                        <p> Orders</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
                                     <a asp-controller="Category" asp-action="Category" class="nav-link">
                                         <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
                                         &nbsp;
@@ -348,35 +361,15 @@
     <!-- Sweet Alert Script -->
     <script src="~/Admin/plugins/sweetalert2/sweetalert2.min.js"></script>
 
+    <!-- Toastr script -->
+    <script src="~/lib/toastr.js/toastr.min.js"></script>
+
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="~/Admin/dist/js/pages/dashboard.js"></script>
+
+    <!-- Admin Module -->
+    <script src="~/modules/adminmodule.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false);
 </body>
 </html>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var navLinks = document.querySelectorAll('li.nav-item a.nav-link');
-
-        function isActiveLink(link) {
-            return link.href === window.location.href;
-        }
-
-        navLinks.forEach(function (link) {
-
-            if (isActiveLink(link)) {
-                link.classList.add('active', 'text-primary');
-            }
-
-            link.addEventListener("click", function () {
-
-                navLinks.forEach(function (navLink) {
-                    if (navLink === 'nav-link active') {
-                        navLink.classList.remove('active', 'text-primary');
-                    }
-                });
-            });
-        });
-    });
-
-</script>

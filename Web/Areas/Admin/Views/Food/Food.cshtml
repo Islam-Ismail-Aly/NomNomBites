@@ -57,7 +57,7 @@
                                         <th>Title</th>
                                         <th>Description</th>
                                         <th>Price</th>
-                                        <th>Image</th>
+@*                                         <th>Image</th> *@
                                         <th>Rating</th>
                                         <th>Availability</th>
                                         <th>Category</th>
@@ -71,7 +71,6 @@
                                             <td>@food.Title</td>
                                             <td>@food.Description</td>
                                             <td>@food.Price</td>
-                                            <td><img src="data:image;base64,@Convert.ToBase64String(food.Image)" alt="Food Image" style="max-width: 100px; max-height: 100px;" /></td> <!-- Display image -->
                                             <td>@food.Rating</td>
                                             <td>
                                                 @if (food.IsAvailable)
@@ -85,7 +84,7 @@
                                             </td>
                                             <td>@food.CategoryTitle</td>
                                             <td>
-                                                <button type="button" class="btn btn-info btn-sm rounded-pill" onclick="Edit('@food.Id', '@food.Title', '@food.Description', '@food.Price', '@food.IsAvailable', '@food.CategoryId')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                <button type="button" class="btn btn-info btn-sm rounded-pill" onclick="Edit('@food.Id', '@food.Title', '@food.Description', '@food.Price', @food.Rating, '@food.IsAvailable', '@food.CategoryId')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                 </button>
                                                 &nbsp;
@@ -125,7 +124,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="foodForm" asp-action="AddFood" asp-controller="Food" method="post">
+                <form id="foodForm" asp-action="AddFood" asp-controller="Food" method="post" enctype="multipart/form-data">
                     <input type="hidden" id="FoodId" name="Id" />
                     <div class="form-group">
                         <label for="Title" class="control-label">Title</label>
@@ -139,9 +138,13 @@
                         <label for="Price" class="control-label">Price</label>
                         <input type="number" class="form-control" name="Price" id="Price" />
                     </div>
+@*                     <div class="form-group">
+                        <label for="Image" class="control-label">Image</label>
+                        <input type="file" class="form-control" name="Image" id="Image" accept=".jpg, .jpeg, .png" />
+                    </div> *@
                     <div class="form-group">
                         <label for="Rating" class="control-label">Rating</label>
-                        <input type="number" class="form-control" name="Rating" id="Rating" />
+                        <input type="number" class="form-control" name="Rating" id="Rating" min="1" max="5" />
                     </div>
                     <div class="form-group">
                         <label for="IsAvailable" class="control-label">Availability</label>
@@ -179,66 +182,8 @@
 <script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
 <script src="~/Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
 
-<script>
-    jQuery.noConflict();
-    jQuery(function ($) {
-        $('#example2').DataTable({
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": true,
-            "responsive": true,
-        });
-    });
+<!-- Datatable Module -->
+<script src="~/modules/datatablemodule.js"></script>
 
-    function Delete(id) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = `/Admin/Food/DeleteFood?Id=${id}`;
-                Swal.fire({
-                    title: 'Deleted!',
-                    text: "The Food has been deleted.",
-                    icon: 'success',
-                })
-            }
-        })
-    }
-
-    function Edit(id, title, description, price, isAvailable, categoryId) {
-        var availability = isAvailable.toLowerCase();
-        $('#FoodId').val(id);
-        $('#Title').val(title);
-        $('#Description').val(description);
-        $('#Price').val(price);
-        $('#Rating').val(rating);
-        $('#IsAvailable').val(availability);
-        $('#CategoryId').val(categoryId);
-        $('#modalTitle').text('Edit Food');
-        $('#foodForm').attr('action', '/Admin/Food/EditFood');
-        $('#btnSave').removeClass('btn-success').addClass('btn-info rounded-pill').text('Edit Food');
-    }
-
-    function Reset() {
-        $('#modalTitle').text('Add New Food');
-        $('#btnSave').text('Save changes');
-        $('#btnSave').removeClass('btn-info').addClass('btn-success rounded-pill');
-        $('#FoodId').val('');
-        $('#Title').val('');
-        $('#Description').val('');
-        $('#Price').val('');
-        $('#Rating').val('');
-        $('#IsAvailable').val('true');
-        $('#CategoryId').val('');
-    }
-
-</script>
+<!-- Food Module -->
+<script src="~/modules/foodmodule.js"></script>

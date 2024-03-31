@@ -1,6 +1,7 @@
 using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Data;
+using Infrastructure.Repository;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -39,6 +40,7 @@ namespace Web
 
             // Add services UnitOfWork
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+            builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
