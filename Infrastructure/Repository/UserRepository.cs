@@ -24,5 +24,15 @@ namespace Infrastructure.Repository
             var customer = _dbContext.Customers.FirstOrDefault(c => c.ApplicationUserId == userId);
             return customer;
         }
+
+        public IEnumerable<Order> GetOrdersByCustomerId(int customerId)
+        {
+            var orders = _dbContext.Customers
+                                   .Include(c => c.Orders)
+                                   .FirstOrDefault(c => c.Id == customerId)
+                                   ?.Orders;
+
+            return orders ?? Enumerable.Empty<Order>();
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace Core.Interfaces
     public interface IUserRepository
     {
         public Customer GetByUserId(string userId);
+        public IEnumerable<Order> GetOrdersByCustomerId(int customerId);
     }
 }
