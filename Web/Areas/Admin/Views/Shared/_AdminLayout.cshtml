@@ -33,6 +33,9 @@
     <!-- Daterange picker -->
     <link rel="stylesheet" href="~/Admin/plugins/daterangepicker/daterangepicker.css">
 
+    <!-- fullCalendar -->
+    <link rel="stylesheet" href="~/Admin/plugins/fullcalendar/main.css">
+
     <!-- summernote -->
     <link rel="stylesheet" href="~/Admin/plugins/summernote/summernote-bs4.min.css">
 
@@ -165,7 +168,7 @@
         <aside class="main-sidebar sidebar-light-primary elevation-4 text-dark">
             <!-- Brand Logo -->
             <a asp-action="Index" asp-controller="Home" class="brand-link">
-                <i class="fa fa-user-circle-o" aria-hidden="true" style="font-size: 25px; margin: 10px;"></i>
+                <i class="fa fa-user-circle-o" aria-hidden="true" style="font-size: 27px; margin: 10px;"></i>
                 <span class="brand-text font-weight-light">Admin Dashboard</span>
             </a>
 
@@ -200,15 +203,29 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
+                                    <a asp-controller="Home" asp-action="Index" class="nav-link">
+                                        <i class="fa fa-pie-chart" aria-hidden="true" style="font-size: 13px;"></i>
+                                        &nbsp;
+                                        <p> Dashboard</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Account" asp-action="Profile" class="nav-link">
+                                        <i class="fa fa-user-o" aria-hidden="true" style="font-size: 13px;"></i>
+                                        &nbsp;
+                                        <p> Profile</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a asp-controller="Account" asp-action="Users" class="nav-link">
-                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        <i class="fa fa-users" aria-hidden="true" style="font-size: 13px;"></i>
                                         &nbsp;
                                         <p> Users</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a asp-controller="Account" asp-action="Roles" class="nav-link">
-                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        <i class="fa fa-universal-access" aria-hidden="true" style="font-size: 13px;"></i>
                                         &nbsp;
                                         <p> Roles</p>
                                     </a>
@@ -225,7 +242,7 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a asp-controller="Food" asp-action="Food" class="nav-link">
-                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        <i class="fa fa-cutlery" aria-hidden="true" style="font-size: 13px;"></i>
                                         &nbsp;
                                         <p> Foods</p>
                                     </a>
@@ -234,7 +251,7 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a asp-controller="Order" asp-action="Orders" class="nav-link">
-                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        <i class="fa fa-shopping-cart" aria-hidden="true" style="font-size: 13px;"></i>
                                         &nbsp;
                                         <p> Orders</p>
                                     </a>
@@ -243,13 +260,12 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a asp-controller="Category" asp-action="Category" class="nav-link">
-                                        <i class="fa fa-chevron-right" aria-hidden="true" style="font-size: 13px;"></i>
+                                        <i class="fa fa-first-order" aria-hidden="true" style="font-size: 13px;"></i>
                                         &nbsp;
                                         <p> Categories</p>
                                     </a>
                                 </li>
                             </ul>          
-                         
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -274,7 +290,6 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-header">MISCELLANEOUS</li>
                         <li class="nav-item">
                             <a href="iframe.html" class="nav-link">
                                 <i class="nav-icon fas fa-ellipsis-h"></i>
@@ -358,6 +373,15 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
+        <!-- Admin Module -->
+    <script src="~/modules/adminmodule.js"></script>
+
+    <!-- fullCalendar 2.2.5 -->
+    <script src="~/Admin/plugins/fullcalendar/main.js"></script>
+
+    <!-- fullCalendar Module -->
+    <script src="~/modules/fullCalendarModule.js"></script>
+
     <!-- Sweet Alert Script -->
     <script src="~/Admin/plugins/sweetalert2/sweetalert2.min.js"></script>
 
@@ -366,9 +390,6 @@
 
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="~/Admin/dist/js/pages/dashboard.js"></script>
-
-    <!-- Admin Module -->
-    <script src="~/modules/adminmodule.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false);
 </body>

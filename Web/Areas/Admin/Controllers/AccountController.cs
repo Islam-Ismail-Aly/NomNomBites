@@ -209,5 +209,24 @@ namespace Web.Areas.Admin.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
+            {
+                var customer = _customerUnitOfWork.UserRepository.GetByUserId(currentUser.Id);
+
+                if (customer != null)
+                {
+                    ViewBag.Phone = customer.Phone;
+                    ViewBag.City = customer.City;
+                    ViewBag.DateAdded = customer.CreationDate.ToShortDateString();
+                    ViewBag.Status = customer.Status;
+                }
+            }
+            return View();
+        }
     }
 }
