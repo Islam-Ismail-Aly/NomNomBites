@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /Web/wwwroot/Admin/plugins/fullcalendar
 /Web/wwwroot/Admin/plugins/moment
+/Web/Controllers/CustomController.cs
+/Web/appsettings.json
