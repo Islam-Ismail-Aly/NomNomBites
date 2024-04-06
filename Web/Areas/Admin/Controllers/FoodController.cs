@@ -67,8 +67,6 @@ namespace Web.Areas.Admin.Controllers
                     Title = viewModel.Title,
                     Description = viewModel.Description,
                     Price = viewModel.Price,
-                    //Image = viewModel.Image,
-                    Image = new byte[0],
                     Rating = viewModel.Rating,
                     IsAvailable = viewModel.IsAvailable,
                     CategoryId = viewModel.CategoryId,

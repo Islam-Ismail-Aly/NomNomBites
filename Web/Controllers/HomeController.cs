@@ -1,4 +1,3 @@
-using Castle.Core.Resource;
 using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Repository;

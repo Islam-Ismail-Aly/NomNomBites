@@ -41,6 +41,7 @@ namespace Web
             // Add services UnitOfWork
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
             builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+            builder.Services.AddScoped(typeof(ICustomerFoodsRepository), typeof(CustomerFoodsRepository));
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
