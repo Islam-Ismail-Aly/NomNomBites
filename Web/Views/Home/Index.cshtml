@@ -1,9 +1,165 @@
-﻿@{
+﻿@model IEnumerable<Category>
+@{
     ViewData["Title"] = "Home Page";
     Layout = "_ProjectLayout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center" onload="GetCategoryFoods('0')">
+    <!-- product section -->
+    <div class="product-section mt-150 mb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="section-title">
+                        <h3><span class="orange-text">Our</span> Products</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="product-filters">
+                        <ul>
+                            <li class="active" id="all"   onclick="GetCategoryFoods('0')">All</li>
+                            @foreach (Category category in Model)
+                            {
+                                <li onclick="GetCategoryFoods(@category.Id)">@category.Title</li>
+                            }
+                        </ul>
+
+                    </div>
+
+                </div>
+                <div class="row" id="Foods"></div>
+            </div>
+
+        </div>
+    </div>
+    <!-- end product section -->
 </div>
+
+
+
+
+
+
+<script>
+
+    window.onload = function () {
+        $("#all").click();
+    }
+
+    function GetCategoryFoods(id) {
+        var foodRow = document.getElementById("Foods");
+        if (id==0)
+        {
+            $.ajax({
+                url: `/Home/GetFoods`,
+                type: 'GET',
+                data: { id: id },
+                success: function (CategoryFoods) {
+                    $.ajax({
+                        url: `/Cart/FoodsInCustomerCart`,
+                        type: 'GET',
+                        success: function (FoodsInCart) {
+                            foodRow.innerHTML = "";
+                            CategoryFoods.forEach(function (food) {
+                                if (food.isAvailable) {
+                                    if (FoodsInCart.includes(food.id)) {
+                                        var productAvailable = "<h6 class='product-price' style='color: green;' >  Available  </h6 >";
+                                        productAvailable += '<a href = "" class="cart-btn" onclick = "return false;">In Your Cart </i></a >';
+                                    }
+                                    else {
+                                        var productAvailable = "<h6 class='product-price' style='color: green;' >  Available  </h6 >";
+                                        productAvailable += `<a href = "" class="cart-btn" onclick = "return AddFoodToCart(this,${food.id})"> <i class="fas fa-shopping-cart" > </i> Add to Cart</a >`
+                                    }
+                                }
+                                else {
+                                    var productAvailable = "<h6 class='product-price' style='color: red;' >Not Available </h6 >";
+                                }
+                                var productHTML = `<div class="col-lg-4 col-md-6 text-center">
+                                                                            <div class="single-product-item">
+                                                                                <div class="product-image">
+                                                                                        <a href="/Home/Details/${food.id}">
+                                                                                        <img src=${food.image} alt="">
+                                                                                    </a>
+                                                                                    </div>
+                                                                                    <h3> ${food.title} </h3>
+                                                                                    <p class="product-price" > ${food.price} $ </p>
+                                                                                         ${productAvailable}
+                                                                                </div>
+                                                                              </div>`;
+                                foodRow.innerHTML += productHTML
+                            })
+                        }
+                        ,
+                        error: function (error) { }
+                    });
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+        else{
+            $.ajax({
+                url: `/Home/GetFoodForCategory`,
+                type: 'GET',
+                data: { id: id },
+                success: function (CategoryFoods) {
+
+                    $.ajax({
+                        url: `/Cart/FoodsInCustomerCart`,
+                        type: 'GET',
+                        success: function (FoodsInCart) {
+                            foodRow.innerHTML = "";
+                            CategoryFoods.forEach(function (food) {
+                                if (food.isAvailable) {
+                                    if (FoodsInCart.includes(food.id)) {
+                                       var productAvailable = "<h6 class='product-price' style='color: green;' >  Available  </h6 >";
+                                        productAvailable += '<a href = "" class="cart-btn" onclick = "return false;">In Your Cart </i></a >';
+                                    }
+                                    else {
+                                        var productAvailable = "<h6 class='product-price' style='color: green;' >  Available  </h6 >";
+                                        productAvailable += `<a href = "" class="cart-btn" onclick = "return AddFoodToCart(this,${food.id})"> <i class="fas fa-shopping-cart" > </i> Add to Cart</a >`
+                                    }
+                                   }
+                                else{
+                                    var productAvailable = "<h6 class='product-price' style='color: red;' >Not Available </h6 >";
+                                    }
+
+                                var productHTML = `<div class="col-lg-4 col-md-6 text-center">
+                                                                        <div class="single-product-item">
+                                                                            <div class="product-image">
+                                                                                    <a href="/Home/Details/${food.id}">
+                                                                                    <img src=${food.image} alt="">
+                                                                                </a>
+                                                                                </div>
+                                                                                <h3> ${food.title} </h3>
+                                                                                <p class="product-price" > ${food.price} $ </p>
+                                                                                     ${productAvailable}
+                                                                            </div>
+                                                                          </div>`;
+                                foodRow.innerHTML += productHTML
+                            })
+                        }
+                        ,
+                        error: function (error) { }
+                    });
+
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+    }
+
+    function AddFoodToCart(anchor, id) {
+        anchor.disabled = true;
+        anchor.innerHTML = "In Your Cart";
+        $.ajax({
+            url: `/Home/AddFoodToCart?foodId=${id}`,
+        });
+        return false;
+    }
+        </script>

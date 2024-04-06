@@ -1,6 +1,7 @@
 using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Data;
+using Infrastructure.Repository;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +24,7 @@ namespace Web
 
             // Configure the connection string
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -39,6 +40,7 @@ namespace Web
 
             // Add services UnitOfWork
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+            builder.Services.AddScoped(typeof(ICustomerFoodsRepository), typeof(CustomerFoodsRepository));
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
