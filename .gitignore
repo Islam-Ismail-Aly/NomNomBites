@@ -361,3 +361,13 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Infrastructure/Migrations/20240331195309_v3.cs
+/Infrastructure/Migrations/20240331195309_v3.Designer.cs
+/Core/Models/Customer.cs
+/Core/Models/Food.cs
+/Web/Views/Cart/Cart.cshtml
+/Web/Views/Home/Index.cshtml
+/Web/wwwroot/assets/bootstrap/css
+/Web/wwwroot/assets/bootstrap/js
+/Web/wwwroot/assets/js/main.js
+/Web/Program.cs
