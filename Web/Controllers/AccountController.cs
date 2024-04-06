@@ -135,5 +135,32 @@ namespace Web.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Profile(CustomerOrdersViewModel viewModel)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
+            {
+                var customer = _customer.UserRepository.GetByUserId(currentUser.Id);
+                var orderlist = _customer.UserRepository.GetOrdersByCustomerId(customer.Id);
+
+                if (customer != null)
+                {
+                    ViewBag.Phone = customer.Phone;
+                    ViewBag.City = customer.City;
+                    ViewBag.DateAdded = customer.CreationDate.ToShortDateString();
+                    ViewBag.Status = customer.Status;
+
+                    var orderslist = new CustomerOrdersViewModel()
+                    {
+                        CustomerId = customer.Id,
+                        CustomerOrders = orderlist,
+                    };
+                }
+            }
+
+            return View();
+        }
     }
 }

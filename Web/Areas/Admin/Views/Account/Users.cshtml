@@ -61,10 +61,10 @@
                                                     @switch (user.Role)
                                                     {
                                                         case "Admin":
-                                                            <span class="badge badge-success d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 13px;">@user.Role</span>
+                                                            <span class="badge badge-info d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 13px;">@user.Role</span>
                                                             break;
                                                         case "Customer":
-                                                            <span class="badge badge-warning d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 13px;">@user.Role</span>
+                                                            <span class="badge badge-success d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 13px;">@user.Role</span>
                                                             break;
                                                         default:
                                                             <span class="badge badge-primary d-flex align-items-center justify-content-center text-white" style="width:130px; height:30px; font-size: 13px;">@user.Role</span>
@@ -72,11 +72,12 @@
                                                     }
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-info btn-sm" onclick="Edit('@user.Id', '@user.Name')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                        Edit <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                                    <button type="button" class="btn btn-info btn-sm rounded-pill" onclick="Edit('@user.UserId', '@user.Name')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-danger btn-sm" onclick="Delete('@user.Id')" value="Delete">
-                                                        Delete <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                    &nbsp;
+                                                    <button type="button" class="btn btn-danger btn-sm rounded-pill" onclick="Delete('@user.UserId')" value="Delete">
+                                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -118,17 +119,11 @@
 <script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
 <script src="~/Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
 
-<script>
-    jQuery.noConflict();
-    jQuery(function ($) {
-        $('#example2').DataTable({
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": true,
-            "responsive": true,
-        });
-    });
-</script>
+<!-- Toastr script -->
+<script src="~/lib/toastr.js/toastr.min.js"></script>
+
+<!-- Datatable Module -->
+<script src="~/modules/datatablemodule.js"></script>
+
+<!-- Users Module -->
+<script src="~/modules/usersmodule.js"></script>

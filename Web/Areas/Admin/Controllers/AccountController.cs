@@ -3,6 +3,7 @@ using Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Web.Areas.Admin.ViewModels;
 
@@ -16,14 +17,17 @@ namespace Web.Areas.Admin.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IUnitOfWork<VwUsers> _vwUsers;
+        private readonly IUnitOfWork<Customer> _customerUnitOfWork;
         public AccountController
-            (RoleManager<IdentityRole> RoleManager, UserManager<ApplicationUser> UserManager, IUnitOfWork<VwUsers> vwUsers, 
-            SignInManager<ApplicationUser> signInManager)
+            (RoleManager<IdentityRole> RoleManager, UserManager<ApplicationUser> UserManager, 
+            IUnitOfWork<VwUsers> vwUsers, SignInManager<ApplicationUser> signInManager, 
+            IUnitOfWork<Customer> customerUnitOfWork)
         {
             _roleManager = RoleManager;
             _userManager = UserManager;
             _vwUsers = vwUsers;
             _signInManager = signInManager;
+            _customerUnitOfWork = customerUnitOfWork;
         }
 
         
@@ -143,7 +147,7 @@ namespace Web.Areas.Admin.Controllers
                 }
             }
 
-            return View("Roles", viewModel);
+            return View(nameof(Roles), viewModel);
         }
 
         [HttpGet]
@@ -157,6 +161,34 @@ namespace Web.Areas.Admin.Controllers
         {
             return View(_vwUsers.Entity.GetAll().Where(vw => vw.Status));
         }
+
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            var existingCustomer = _customerUnitOfWork.UserRepository.GetByUserId(userId);
+
+            if (existingCustomer == null)
+            {
+                return NotFound(new { message = "Customer not found." });
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                // Construct error message
+                var errorMessage = string.Join("\n", result.Errors.Select(e => e.Description));
+                return BadRequest(new { message = errorMessage });
+            }
+
+            return RedirectToAction(nameof(Users));
+        }
+
+
 
         public async Task<IActionResult> DeleteRole(string Id)
         {
@@ -175,6 +207,25 @@ namespace Web.Areas.Admin.Controllers
         [AllowAnonymous]
         public IActionResult AccessDenied()
         {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
+            {
+                var customer = _customerUnitOfWork.UserRepository.GetByUserId(currentUser.Id);
+
+                if (customer != null)
+                {
+                    ViewBag.Phone = customer.Phone;
+                    ViewBag.City = customer.City;
+                    ViewBag.DateAdded = customer.CreationDate.ToShortDateString();
+                    ViewBag.Status = customer.Status;
+                }
+            }
             return View();
         }
     }

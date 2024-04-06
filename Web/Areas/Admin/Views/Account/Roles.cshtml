@@ -33,7 +33,7 @@
 
                                 <!-- Button trigger modal -->
                                 <button type="button" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Reset()">
-                                    Add New Role
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Add New Role 
                                 </button>
 
                             </div>
@@ -57,10 +57,10 @@
                                                     @switch (item.Name)
                                                     {
                                                         case "Admin":
-                                                            <span class="badge badge-success d-flex align-items-center justify-content-center text-white" style="width:160px; height:30px; font-size: 13px;">@item.Name</span>
+                                                            <span class="badge badge-info d-flex align-items-center justify-content-center text-white" style="width:160px; height:30px; font-size: 13px;">@item.Name</span>
                                                             break;
                                                         case "Customer":
-                                                            <span class="badge badge-warning d-flex align-items-center justify-content-center text-white" style="width:160px; height:30px; font-size: 13px;">@item.Name</span>
+                                                            <span class="badge badge-success d-flex align-items-center justify-content-center text-white" style="width:160px; height:30px; font-size: 13px;">@item.Name</span>
                                                             break;
                                                         default:
                                                             <span class="badge badge-primary d-flex align-items-center justify-content-center text-white" style="width:160px; height:30px; font-size: 13px;">@item.Name</span>
@@ -68,11 +68,11 @@
                                                     }
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-info btn-sm" onclick="Edit('@item.Id', '@item.Name')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <button type="button" class="btn btn-info btn-sm rounded-pill" onclick="Edit('@item.Id', '@item.Name')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                          Edit <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                     </button>
-                                                     | 
-                                                    <button type="button" class="btn btn-danger btn-sm" onclick="Delete('@item.Id')" value="Delete">
+                                                     &nbsp; 
+                                                    <button type="button" class="btn btn-danger btn-sm rounded-pill" onclick="Delete('@item.Id')" value="Delete">
                                                          Delete <i class="fa fa-trash-o" aria-hidden="true"></i>
                                                     </button>
                                                 </td>
@@ -146,83 +146,5 @@
     </div>
 </div>
 
-<script>
-    document.getElementById('roleForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        var formData = new FormData(this);
-
-        fetch('@Url.Action("Roles", "Account")', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: data.message,
-                        confirmButtonText: 'Ok',
-                        timer:2000
-                    }).then(function () {
-                        window.location.href = '/Admin/Account/Roles';
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message + ' ' + data.errors.join(' '),
-                        footer: '<a href="">Why do I have this issue?</a>'
-                    });
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong!',
-                    footer: '<a href="">Why do I have this issue?</a>'
-                });
-            });
-    });
-
-    ﻿
-function Delete(id) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if(result.isConfirmed)
-        {
-            window.location.href = `/Admin/Account/DeleteRole?Id=${id}`;
-             Swal.fire({
-                title: 'Deleted!',
-                text: "The Role has been deleted.",
-                icon: 'success',
-            })
-        }
-    })
-}
-
-function Edit(id, name){
-    document.getElementById("modalTitle").innerHTML = "Edit Role";
-    document.getElementById("btnSave").value = "Update changes";
-    document.getElementById("btnSave").classList.add("btn", "btn-info", "rounded-pill");
-    document.getElementById("roleId").value = id;
-    document.getElementById("roleName").value = name;
-}
-
-function Reset() {
-    document.getElementById("modalTitle").innerHTML = "Add New Role";
-    document.getElementById("btnSave").value = "Save changes";
-    document.getElementById("btnSave").classList.add("btn", "btn-success", "rounded-pill");
-    document.getElementById("roleId").value = "";
-    document.getElementById("roleName").value = "";
-}
-</script>
+<!-- Roles Module -->
+<script src="~/modules/rolesmodule.js"></script>

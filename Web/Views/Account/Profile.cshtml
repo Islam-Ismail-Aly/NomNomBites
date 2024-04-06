@@ -1,0 +1,188 @@
+﻿@inject UserManager<ApplicationUser> _userManager
+@inject SignInManager<ApplicationUser> _signInManager
+@model IEnumerable<CustomerOrdersViewModel>
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "";
+
+    var user = await _userManager.GetUserAsync(User);
+    var roles = await _userManager.GetRolesAsync(user);
+    var roleName = roles.FirstOrDefault();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/png" href="/assets/img/logo-1.png">
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="/assets/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/Admin/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- bootstrap -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="~/Admin/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Admin/dist/css/adminlte.min.css">
+    <!-- owl carousel -->
+    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
+    <!-- magnific popup -->
+    <link rel="stylesheet" href="/assets/css/magnific-popup.css">
+    <!-- animate css -->
+    <link rel="stylesheet" href="/assets/css/animate.css">
+    <!-- mean menu css -->
+    <link rel="stylesheet" href="/assets/css/meanmenu.min.css">
+    <!-- main style -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <!-- responsive -->
+    <link rel="stylesheet" href="/assets/css/responsive.css">
+
+</head>
+<body>
+
+    <!-- Include header partial view -->
+    <partial name="_HeaderPartial" />
+
+    <div class="breadcrumb-section breadcrumb-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="breadcrumb-text">
+                        <h1>Profile</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="section profile my-3">
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                        <i class="fa fa-user-circle-o" aria-hidden="true" style="font-size: 60px; margin: 10px;"></i>
+                        <h2>@((await _userManager.GetUserAsync(User)).Name)</h2>
+                        <h3><span class="badge badge-info d-flex align-items-center justify-content-center text-white" style="width:120px; height:27px; font-size: 13px;">@roleName</span></h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <ul class="nav nav-tabs nav-tabs-bordered" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#profile-overview">Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#profile-edit">Edit Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#profile-settings">Settings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#profile-change-password">Change Password</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content pt-2 my-3">
+                            <div class="tab-pane fade show active" id="profile-overview">
+                                <p class="large fst-italic">Welcome, <b>@((await _userManager.GetUserAsync(User)).Name)</b></p>
+                                <!-- Profile Details -->
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Full Name</div>
+                                    <div class="col-lg-9 col-md-8">@((await _userManager.GetUserAsync(User)).Name)</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Status</div>
+                                    <div class="col-lg-9 col-md-8">
+                                        @if (ViewBag.Status)
+                                        {
+                                            <span class="badge badge-success">Available <i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-danger">Not Available <i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Date Added</div>
+                                    <div class="col-lg-9 col-md-8">@ViewBag.DateAdded</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Address</div>
+                                    <div class="col-lg-9 col-md-8">@((await _userManager.GetUserAsync(User)).Address)</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">City</div>
+                                    <div class="col-lg-9 col-md-8">@ViewBag.City</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Phone</div>
+                                    <div class="col-lg-9 col-md-8">@ViewBag.Phone</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Email</div>
+                                    <div class="col-lg-9 col-md-8">@((await _userManager.GetUserAsync(User)).UserName)</div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="profile-edit">
+                                <!-- Profile Edit Form -->
+                                <form>
+                                    <!-- Your form content here -->
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade" id="profile-settings">
+                                <!-- Settings Form -->
+                                <form>
+                                    <!-- Your form content here -->
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade" id="profile-change-password">
+                                <!-- Change Password Form -->
+                                <form>
+                                    <!-- Your form content here -->
+                                </form>
+                            </div>
+                        </div><!-- End tab content -->
+                    </div><!-- End card body -->
+                </div><!-- End card -->
+            </div><!-- End col-xl-8 -->
+        </div><!-- End row -->
+    </section><!-- End profile section -->
+
+    <!-- Include footer partial view -->
+    <partial name="_FooterPartial" />
+
+    <!-- Include Scripts partial view -->
+    <partial name="_ScriptsPartial" />
+
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="~/Admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap 4 -->
+    <script src="~/Admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="~/Admin/dist/js/adminlte.js"></script>
+
+    <!--Login Web Module-->
+    <script src="~/modules/LoginWebModule.js"></script>
+</body>
+</html>
+

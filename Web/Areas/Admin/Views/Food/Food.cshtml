@@ -1,0 +1,189 @@
+﻿@model IEnumerable<FoodViewModel>
+@{
+    ViewData["Title"] = "Foods";
+}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Foods</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-Action="Index">Home</a></li>
+                        <li class="breadcrumb-item active">Manage Foods</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Category Filter -->
+                <div class="col-md-2">
+                    <form id="categoryForm" asp-action="Food" asp-controller="Food" method="get">
+                        <div class="form-group">
+                            <label for="categoryFilter">Filter by Category:</label>
+                            <select id="categoryFilter" name="categoryFilter" class="form-select">
+                                <option value="">All Categories</option>
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    <option value="@category.Title">@category.Title</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary rounded-3 my-2"><i class="fa fa-paper-plane" aria-hidden="true" style="font-size: 12px;"></i> Filter</button>
+                    </form>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Foods Management</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Reset()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Add New Food
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="example2" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Price</th>
+@*                                         <th>Image</th> *@
+                                        <th>Rating</th>
+                                        <th>Availability</th>
+                                        <th>Category</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var food in Model)
+                                    {
+                                        <tr>
+                                            <td>@food.Title</td>
+                                            <td>@food.Description</td>
+                                            <td>@food.Price</td>
+                                            <td>@food.Rating</td>
+                                            <td>
+                                                @if (food.IsAvailable)
+                                                {
+                                                    <span class="badge badge-success">Available <i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">Not Available <i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                                                }
+                                            </td>
+                                            <td>@food.CategoryTitle</td>
+                                            <td>
+                                                <button type="button" class="btn btn-info btn-sm rounded-pill" onclick="Edit('@food.Id', '@food.Title', '@food.Description', '@food.Price', @food.Rating, '@food.IsAvailable', '@food.CategoryId')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                                </button>
+                                                &nbsp;
+                                                <button type="button" class="btn btn-danger btn-sm rounded-pill" onclick="Delete('@food.Id')" value="Delete">
+                                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                    @if (!Model.Any())
+                                    {
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="bg-warning-subtle p-2 rounded-square rounded-3 my-2" role="alert">
+                                                    <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+                                                    <span> No foods available</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Add New Food</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="foodForm" asp-action="AddFood" asp-controller="Food" method="post" enctype="multipart/form-data">
+                    <input type="hidden" id="FoodId" name="Id" />
+                    <div class="form-group">
+                        <label for="Title" class="control-label">Title</label>
+                        <input type="text" class="form-control" name="Title" id="Title" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Description" class="control-label">Description</label>
+                        <input type="text" class="form-control" name="Description" id="Description" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Price" class="control-label">Price</label>
+                        <input type="number" class="form-control" name="Price" id="Price" />
+                    </div>
+@*                     <div class="form-group">
+                        <label for="Image" class="control-label">Image</label>
+                        <input type="file" class="form-control" name="Image" id="Image" accept=".jpg, .jpeg, .png" />
+                    </div> *@
+                    <div class="form-group">
+                        <label for="Rating" class="control-label">Rating</label>
+                        <input type="number" class="form-control" name="Rating" id="Rating" min="1" max="5" />
+                    </div>
+                    <div class="form-group">
+                        <label for="IsAvailable" class="control-label">Availability</label>
+                        <select class="form-select" name="IsAvailable" id="IsAvailable">
+                            <option value="true">Available</option>
+                            <option value="false">Not Available</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryId" class="control-label">Category</label>
+                        <select class="form-select" name="CategoryId" id="CategoryId">
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <option value="@category.Id">@category.Title</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success rounded-pill" id="btnSave">Save changes</button>
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DataTables  & Plugins -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/Admin/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+
+<!-- Datatable Module -->
+<script src="~/modules/datatablemodule.js"></script>
+
+<!-- Food Module -->
+<script src="~/modules/foodmodule.js"></script>
