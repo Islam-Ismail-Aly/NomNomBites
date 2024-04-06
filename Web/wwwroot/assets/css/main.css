@@ -254,7 +254,10 @@ p:last-child {
     transform: rotate(720deg);
   }
 }
-
+.rating {
+    color: gold;
+    font-size: 25px;
+}
 @-webkit-keyframes spinRight {
   from {
     -webkit-transform: rotate(360deg);
@@ -2210,6 +2213,10 @@ a.video-play-btn {
 .team-bg-4 {
   background-image: url(../img/team/team-4.jpg);
 }
+.team-bg-5 {
+    background-image: url(../img/team/team-5.jpg);
+}
+
 
 .team-bg {
   height: 400px;
@@ -2777,3 +2784,4 @@ table.order-details tbody td {
   vertical-align: middle;
   width: 100%;
 }
+
