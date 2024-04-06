@@ -15,6 +15,7 @@ namespace Infrastructure.Data
         public DbSet<FoodOrders> FoodOrders { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<VwUsers> VwUsers { get; set; }
 
         public ApplicationDbContext()
         {
@@ -48,6 +49,10 @@ namespace Infrastructure.Data
             builder.Entity<CustomerOrderPayment>().HasKey(t => new { t.OrderId, t.CustomerId, t.PaymentId });
 
             #endregion
+
+            // view in db 
+
+            builder.Entity<VwUsers>().HasNoKey().ToView("VwUsers");
         }
     }
 }

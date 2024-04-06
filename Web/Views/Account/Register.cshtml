@@ -1,4 +1,4 @@
-﻿@model Web.ViewModels.RegisterViewModel
+﻿@model RegisterViewModel
 
 @{
     ViewData["Title"] = "Register";
@@ -13,7 +13,7 @@
     <meta name="description" content="">
 
     <!-- favicon -->
-    <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/img/logo-1.png">
     <!-- google font -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
@@ -69,12 +69,6 @@
                             </div>
 
                             <div class="form-group my-2">
-                                <label for="Address">Address</label>
-                                <input type="text" class="form-control" id="Address" placeholder="Enter your address.." asp-for="Address" />
-                                <span asp-validation-for="Address" class="text-danger"></span>
-                            </div>
-
-                            <div class="form-group my-2">
                                 <label for="Email">Email</label>
                                 <input type="email" class="form-control" id="Email" placeholder="Enter your email.." asp-for="Email" />
                                 <span asp-validation-for="Email" class="text-danger"></span>
@@ -91,6 +85,31 @@
                                 <input type="password" class="form-control" id="ConfirmPassword" placeholder="Confirm your password.." asp-for="ConfirmPassword" />
                                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                             </div>
+
+                            <div class="form-group my-2 ">
+                                <label for="Address">Address</label>
+                                <input type="text" class="form-control" id="Address" placeholder="Enter your address.." asp-for="Address" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group my-2 col-lg-8">
+                                <label for="Phone">Phone</label>
+                                <input type="text" class="form-control" id="Phone" placeholder="Enter your phone.." asp-for="Phone" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group my-2 col-lg-6">
+                                <label for="City">City</label>
+                                <select class="form-select" id="City" asp-for="City">
+                                    <option value="">Select a City..</option>
+                                    @foreach (var city in Enum.GetValues(typeof(UtilityHelper.EgyptianCities)))
+                                    {
+                                        <option value="@city">@city</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+
                             <div class="row justify-content-center">
                                 <button type="submit" id="btn-boxed" class="my-3"> Register <i class="fa fa-check" aria-hidden="true"></i></button>
                             </div>
@@ -107,88 +126,7 @@
     <!-- Include Scripts partial view -->
     <partial name="_ScriptsPartial" />
 
+    <!--Login Web Module-->
+    <script src="~/modules/RegisterWebModule.js"></script>
 </body>
-<script>
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        register();
-    });
-
-    function register() {
-        var name = document.getElementById('Name').value;
-        var email = document.getElementById('Email').value;
-        var password = document.getElementById('Password').value;
-        var address = document.getElementById('Address').value;
-
-        // Example check for email, password, and address
-        if (name === "" || email === "" || password === "" || address === "") {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Name, Email, password, and address are required!',
-            });
-            return;
-        }
-
-        $.ajax({
-            type: 'POST',
-            url: '/Register',
-            data: {
-                Name: name,
-                Address: address,
-                Email: email,
-                Password: password,
-                ConfirmPassword: confirmPassword
-            },
-            success: function (response) {
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Registration has been Successfully',
-                        text: 'Please try login!',
-                    });
-                    // If login is successful, redirect to the home page
-                    window.location.href = '/Account/Login';
-                } else {
-                    // If login fails, show error message
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: response.message,
-                    });
-                }
-            },
-            error: function (xhr, status, error) {
-                // If there's an error with the AJAX request, show generic error message
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'An error occurred while processing your request.',
-                });
-            }
-        });
-    }
-
-    const container = document.getElementById('lottie-container');
-
-    if (container && typeof lottie !== 'undefined') {
-        fetch('/assets/animation/Animation_Registration.json')
-            .then(response => response.json())
-            .then(animationData => {
-                const anim = lottie.loadAnimation({
-                    container: container,
-                    renderer: 'svg',
-                    loop: true,
-                    autoplay: true,
-                    animationData: animationData,
-                });
-            })
-            .catch(error => {
-                console.error('Error loading animation data:', error);
-            });
-    }
-    else {
-        console.error("Container element not found or Lottie library not loaded.");
-    }
-
-</script>
+</html>

@@ -1,0 +1,133 @@
+﻿@inject UserManager<ApplicationUser> _userManager
+@inject SignInManager<ApplicationUser> _signInManager
+
+@{
+    ViewData["Title"] = "Profile";
+
+    var user = await _userManager.GetUserAsync(User);
+    var roles = await _userManager.GetRolesAsync(user);
+    var roleName = roles.FirstOrDefault();
+}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">@ViewData["Title"]</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="breadcrumb-item active">@ViewData["Title"]</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section profile">
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                        <i class="fa fa-user-circle-o" aria-hidden="true" style="font-size: 60px; margin: 10px;"></i>
+                        <h2>@((await _userManager.GetUserAsync(User)).Name)</h2>
+                        <h3><span class="badge badge-info d-flex align-items-center justify-content-center text-white" style="width:120px; height:27px; font-size: 13px;">@roleName</span></h3>
+                        <div class="social-links mt-2">
+                            <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <ul class="nav nav-tabs nav-tabs-bordered" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#profile-overview">Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#profile-edit">Edit Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#profile-settings">Settings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#profile-change-password">Change Password</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content pt-2 my-3">
+                            <div class="tab-pane fade show active" id="profile-overview">
+                                <p class="large fst-italic">Welcome, <b>@((await _userManager.GetUserAsync(User)).Name)</b></p>
+                                <!-- Profile Details -->
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Full Name</div>
+                                    <div class="col-lg-9 col-md-8">@((await _userManager.GetUserAsync(User)).Name)</div>
+                                </div> 
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Status</div>
+                                    <div class="col-lg-9 col-md-8">
+                                        @if (ViewBag.Status)
+                                        {
+                                            <span class="badge badge-success">Available <i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-danger">Not Available <i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Date Added</div>
+                                    <div class="col-lg-9 col-md-8">@ViewBag.DateAdded</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Address</div>
+                                    <div class="col-lg-9 col-md-8">@((await _userManager.GetUserAsync(User)).Address)</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">City</div>
+                                    <div class="col-lg-9 col-md-8">@ViewBag.City</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Phone</div>
+                                    <div class="col-lg-9 col-md-8">@ViewBag.Phone</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Email</div>
+                                    <div class="col-lg-9 col-md-8">@((await _userManager.GetUserAsync(User)).UserName)</div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="profile-edit">
+                                <!-- Profile Edit Form -->
+                                <form>
+                                    <!-- Your form content here -->
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade" id="profile-settings">
+                                <!-- Settings Form -->
+                                <form>
+                                    <!-- Your form content here -->
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade" id="profile-change-password">
+                                <!-- Change Password Form -->
+                                <form>
+                                    <!-- Your form content here -->
+                                </form>
+                            </div>
+                        </div><!-- End tab content -->
+                    </div><!-- End card body -->
+                </div><!-- End card -->
+            </div><!-- End col-xl-8 -->
+        </div><!-- End row -->
+    </section><!-- End profile section -->
+</div><!-- End content-wrapper -->

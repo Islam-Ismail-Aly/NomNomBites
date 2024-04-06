@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +27,7 @@ namespace Infrastructure.Repository
 
         public IEnumerable<T> GetAll()
         {
-            return table.ToList();
+            return table.AsNoTracking().ToList();
         }
 
         public T GetById(object id)
@@ -43,6 +44,15 @@ namespace Infrastructure.Repository
         {
             table.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
+        }
+        public IQueryable<T> GetAllIncluding(params Expression<Func<T, object>>[] includeProperties)
+        {
+            IQueryable<T> query = table;
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+            return query;
         }
     }
 }

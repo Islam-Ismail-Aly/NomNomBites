@@ -10,6 +10,12 @@ namespace Web.ViewModels
 
         [Required(ErrorMessage = "Address is required.")]
         public string Address { get; set; }
+        
+        [Required(ErrorMessage = "Address is City.")]
+        public string City { get; set; }      
+        
+        [Required(ErrorMessage = "Address is Phone.")]
+        public string Phone { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email format.")]

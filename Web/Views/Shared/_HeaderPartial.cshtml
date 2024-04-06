@@ -1,4 +1,7 @@
-﻿<!-- header -->
+﻿@inject UserManager<ApplicationUser> _userManager
+@inject SignInManager<ApplicationUser> _signInManager
+
+<!-- header -->
 <div class="top-header-area" id="sticker">
     <div class="container">
         <div class="row">
@@ -6,8 +9,8 @@
                 <div class="main-menu-wrap">
                     <!-- logo -->
                     <div class="site-logo">
-                        <a href="index.html">
-                            <img src="assets/img/logo.png" alt="">
+                        <a asp-controller="Home" asp-action="Index">
+                            <img src="assets/img/logo-1.png" alt="" style="max-width: 80px; height: auto;">
                         </a>
                     </div>
                     <!-- logo -->
@@ -15,32 +18,44 @@
                     <nav class="main-menu">
                         <ul>
                             <li class="current-list-item">
-                                <a href="#">Home</a>
-                                <ul class="sub-menu">
-                                    <li><a href="/Home/Index">Slider Home</a></li>
-                                </ul>
+                                <a asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                             <li>
                                 <a href="#">Pages</a>
                                 <ul class="sub-menu">
-                                    <li><a href="/Home/About">About</a></li>
+                                    <li><a href="404.html">404 page</a></li>
+                                    <li><a href="about.html">About</a></li>
                                     <li><a href="cart.html">Cart</a></li>
                                     <li><a href="checkout.html">Check Out</a></li>
-                                    <li><a href="/Home/ContactUs">Contact</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                    <li><a href="news.html">News</a></li>
                                     <li><a href="shop.html">Shop</a></li>
                                 </ul>
                             </li>
-                         
-                            <li><a href="/Home/ContactUs">Contact</a></li>
-                 
+                            <li>
+                                <a href="news.html">News</a>
+                                <ul class="sub-menu">
+                                    <li><a href="news.html">News</a></li>
+                                    <li><a href="single-news.html">Single News</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="contact.html">Contact</a></li>
+                            <li>
+                                <a href="shop.html">Shop</a>
+                                <ul class="sub-menu">
+                                    <li><a href="shop.html">Shop</a></li>
+                                </ul>
+                            </li>
                             <li>
                                 <div class="header-icons">
-                                    @if (User.Identity.IsAuthenticated)
+                                    @if (_signInManager.IsSignedIn(User))
                                     {
-                                        <a class="shopping-cart" href="cart.html"><i class="fas fa-shopping-cart"></i></a>
-                                        <a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>
-                                        <p class="welcome-msg">Welcome, @User.Identity.Name!</p>
+                                        <a asp-controller="Cart" asp-action="Show" class="shopping-cart"><i class="fa fa-shopping-cart"></i></a>
+                                        <a class="mobile-hide search-bar-icon" href="#"><i class="fa fa-search"></i></a>
+                                        <a class="welcome-msg"> Welcome, @((await _userManager.GetUserAsync(User)).Name)</a>
+                                        <a asp-controller="Account" asp-Action="Profile" class="login-icon"><i class="fa fa-user-o" aria-hidden="true"></i> Profile</a>
+                                        <a asp-controller="Account" asp-Action="Logout" class="login-icon"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
                                     }
                                     else
                                     {

@@ -1,0 +1,155 @@
+﻿@model IEnumerable<CategoryViewModel>
+@{
+    ViewData["Title"] = "Category";
+}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Category</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-Action="Index">Home</a></li>
+                        <li class="breadcrumb-item active">Manage NomNom Bites</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Categories Management</h3>
+                            <div class="card-tools">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Reset()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Add New Category
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="example2" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Category Title</th>
+                                        <th>Availability</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Any())
+                                    {
+                                        @foreach (var category in Model)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <span class="badge d-flex align-items-center justify-content-center text-dark rounded-3" style="width: 150px; height: 30px; font-size: 13px; border: 1px solid #39cccc;">
+                                                        @category.CategoryTitle
+                                                    </span>
+                                                </td>
+                                                <td class="col-lg-4">
+                                                    @if (category.IsAvailable)
+                                                    {
+                                                        <span class="badge badge-success">Available <i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-danger">Not Available <i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                                                    }
+                                                </td>
+                                                <td class="col-lg-4">
+                                                    <button type="button" class="btn btn-info btn-sm rounded-pill" onclick="Edit('@category.CategoryId', '@category.CategoryTitle', '@category.IsAvailable')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                        Edit <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                                    </button>
+                                                    &nbsp;
+                                                    <button type="button" class="btn btn-danger btn-sm rounded-pill" onclick="Delete('@category.CategoryId')" value="Delete">
+                                                        Delete <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="3">
+                                                <div class="bg-warning-subtle p-2 rounded-square rounded-3 my-2" role="alert">
+                                                    <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+                                                    <span> No categories available</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Add New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm" asp-action="AddCategory" asp-controller="Category" method="post">
+                    <input type="hidden" id="CategoryId" name="CategoryId" />
+                    <div class="form-group">
+                        <label for="CategoryTitle" class="control-label">Category Title</label>
+                        <input type="text" class="form-control" name="CategoryTitle" id="CategoryTitle" />
+                    </div>
+                    <div class="form-group">
+                        <label for="IsAvailable" class="control-label">Availability</label>
+                        <select class="form-select" name="IsAvailable" id="IsAvailable">
+                            <option value="true">Available</option>
+                            <option value="false">Not Available</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success rounded-pill" id="btnSave">Save changes</button>
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DataTables  & Plugins -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/Admin/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+
+<!-- Datatable Module -->
+<script src="~/modules/datatablemodule.js"></script>
+
+<!-- Category Module -->
+<script src="~/modules/categorymodule.js"></script>

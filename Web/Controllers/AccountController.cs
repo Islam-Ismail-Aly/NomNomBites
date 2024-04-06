@@ -1,28 +1,36 @@
-﻿using Core.Models;
+﻿using Core.Interfaces;
+using Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Web.Validators;
 using Web.ViewModels;
 
 namespace Web.Controllers
 {
+    [AllowAnonymous]
+    [AuthenticatedUsersAttribute]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUnitOfWork<Customer> _customer;
 
         public AccountController
             (UserManager<ApplicationUser> UserManager
-            , SignInManager<ApplicationUser> SignInManager)
+            , SignInManager<ApplicationUser> SignInManager, IUnitOfWork<Customer> customer)
         {
             _userManager = UserManager;
             _signInManager = SignInManager;
+            _customer = customer;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Login()
+        public IActionResult Login()
         {
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -32,15 +40,14 @@ namespace Web.Controllers
             if (ModelState.IsValid)
             {
                 // Find the user by email
-                ApplicationUser user = await _userManager.FindByEmailAsync(viewModel.Email);
+                ApplicationUser user = await _userManager.FindByNameAsync(viewModel.Email);
 
-                // If user exists
+                // if user exist
                 if (user != null)
                 {
                     // Check if the provided password matches the user's password
                     bool isValidPassword = await _userManager.CheckPasswordAsync(user, viewModel.Password);
 
-                    // If password is correct
                     if (isValidPassword)
                     {
                         // Sign in the user
@@ -49,10 +56,15 @@ namespace Web.Controllers
                         // Return success response
                         return Json(new { success = true });
                     }
+                    else
+                    {
+                        return Json(new { success = false, message = "Incorrect Email or Password!" });
+                    }
                 }
-
-                // If user does not exist or password is incorrect, return error response
-                return Json(new { success = false });
+                else
+                {
+                    return Json(new { success = false, message = "Email not found" });
+                }
             }
 
             // If ModelState is not valid or login fails, return the view with the provided viewModel
@@ -61,7 +73,7 @@ namespace Web.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Register()
+        public IActionResult Register()
         {
             return View();
         }
@@ -73,38 +85,47 @@ namespace Web.Controllers
             // Check if the provided model is valid
             if (ModelState.IsValid)
             {
-                // Create a new ApplicationUser object with the provided information
                 var user = new ApplicationUser
                 {
+                    Name = viewModel.Name,
                     UserName = viewModel.Email,
                     Address = viewModel.Address
                 };
 
-                // Attempt to create the user in the database
                 var result = await _userManager.CreateAsync(user, viewModel.Password);
 
                 // If user creation is successful
                 if (result.Succeeded)
                 {
-                    // Assign the "Customer" role to the user
+                    var customer = new Customer
+                    {
+                        Name = viewModel.Name,
+                        Address = viewModel.Address,
+                        Phone = viewModel.Phone,
+                        City = viewModel.City,
+                        Status = true,
+                        CreationDate = DateTime.UtcNow,
+                        ApplicationUserId = user.Id,
+                    };
+
+                    _customer.Entity.Insert(customer);
+
+                    _customer.Save();
+
                     await _userManager.AddToRoleAsync(user, "Customer");
 
-                    // Sign in the user
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    // Return success response
                     return Json(new { success = true });
                 }
                 else
                 {
-                    // If there are errors during user creation, return error response
                     var errors = result.Errors.Select(e => e.Description);
-                    return Json(new { success = false, error = string.Join(", ", errors) });
+                    return Json(new { success = false, message = string.Join(", ", errors) });
                 }
             }
 
-            // If ModelState is not valid or registration fails, return error response
-            return Json(new { success = false, error = "Invalid registration data" });
+            return Json(new { success = false, message = "Invalid registration data!" });
         }
 
 
@@ -113,6 +134,33 @@ namespace Web.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Profile(CustomerOrdersViewModel viewModel)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
+            {
+                var customer = _customer.UserRepository.GetByUserId(currentUser.Id);
+                var orderlist = _customer.UserRepository.GetOrdersByCustomerId(customer.Id);
+
+                if (customer != null)
+                {
+                    ViewBag.Phone = customer.Phone;
+                    ViewBag.City = customer.City;
+                    ViewBag.DateAdded = customer.CreationDate.ToShortDateString();
+                    ViewBag.Status = customer.Status;
+
+                    var orderslist = new CustomerOrdersViewModel()
+                    {
+                        CustomerId = customer.Id,
+                        CustomerOrders = orderlist,
+                    };
+                }
+            }
+
+            return View();
         }
     }
 }

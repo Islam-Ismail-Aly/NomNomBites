@@ -9,13 +9,16 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.UnitOfWork
 {
-    public class UnitOfWork<T> : IUnitOfWork<T> where T : class
+    public class UnitOfWork<T> : IDisposable, IUnitOfWork<T> where T : class
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUserRepository _userRepository;
         private IGenericRepository<T> _entity;
-        public UnitOfWork(ApplicationDbContext context)
+
+        public UnitOfWork(ApplicationDbContext context, IUserRepository userRepository)
         {
             _context = context;
+            _userRepository = userRepository;
         }
         public IGenericRepository<T> Entity
         {
@@ -25,9 +28,17 @@ namespace Infrastructure.UnitOfWork
             }
         }
 
+        // equals get { return _userRepository; }
+        public IUserRepository UserRepository => _userRepository;
+
         public void Save()
         {
             _context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
         }
     }
 }

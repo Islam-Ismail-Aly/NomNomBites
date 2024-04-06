@@ -1,0 +1,150 @@
+﻿@model RolesViewModel
+@{
+    ViewData["Title"] = "Roles";
+}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Roles</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-Action="Index"></a>Home</li>
+                        <li class="breadcrumb-item active">Manage NomNom Bites</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">User Roles Management</h3>
+                            <div class="card-tools">
+
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-info rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Reset()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Add New Role 
+                                </button>
+
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="example2" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>Role Name</td>
+                                        <td>Actions</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(Model.Roles != null && Model.Roles.Any())
+                                    {
+                                        @foreach (var item in Model.Roles)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @switch (item.Name)
+                                                    {
+                                                        case "Admin":
+                                                            <span class="badge badge-info d-flex align-items-center justify-content-center text-white" style="width:160px; height:30px; font-size: 13px;">@item.Name</span>
+                                                            break;
+                                                        case "Customer":
+                                                            <span class="badge badge-success d-flex align-items-center justify-content-center text-white" style="width:160px; height:30px; font-size: 13px;">@item.Name</span>
+                                                            break;
+                                                        default:
+                                                            <span class="badge badge-primary d-flex align-items-center justify-content-center text-white" style="width:160px; height:30px; font-size: 13px;">@item.Name</span>
+                                                            break;
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-info btn-sm rounded-pill" onclick="Edit('@item.Id', '@item.Name')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                         Edit <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                                    </button>
+                                                     &nbsp; 
+                                                    <button type="button" class="btn btn-danger btn-sm rounded-pill" onclick="Delete('@item.Id')" value="Delete">
+                                                         Delete <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="bg-warning-subtle p-2 rounded-square rounded-3 my-2" role="alert">
+                                                    <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+                                                    <span> No roles available</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalTitle">Add New Role</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="roleForm" asp-action="Roles" asp-controller="Account" method="post">
+                    <div class="form-group">
+                        <input type="text" hidden class="form-control" asp-for="NewRole.RoleId" id="roleId" />
+                        <label asp-for="NewRole.RoleName" class="control-label">Role Name</label>
+                        <input type="text" class="form-control" asp-for="NewRole.RoleName" id="roleName" />
+                        <span asp-validation-for="NewRole.RoleName" class="text-danger"></span>
+                    </div>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach (var modelState in ViewData.ModelState.Values)
+                                {
+                                    foreach (var error in modelState.Errors)
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    }
+                    <div class="modal-footer" style="padding: 0 15px 15px 0;">
+                        <input type="submit" class="btn btn-success rounded-pill" id="btnSave" value="Save changes"/>
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Roles Module -->
+<script src="~/modules/rolesmodule.js"></script>

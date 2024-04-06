@@ -1,0 +1,175 @@
+﻿@model IEnumerable< CustomerFoods >
+
+@{
+    ViewData["Title"] = "Show";
+	Layout = "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+
+	<!-- favicon -->
+	<link rel="shortcut icon" type="image/png" href="/assets/img/logo-1.png">
+	<!-- google font -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+	<!-- fontawesome -->
+	<link rel="stylesheet" href="/assets/css/all.min.css">
+	<!-- bootstrap -->
+	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<!-- owl carousel -->
+	<link rel="stylesheet" href="/assets/css/owl.carousel.css">
+	<!-- magnific popup -->
+	<link rel="stylesheet" href="/assets/css/magnific-popup.css">
+	<!-- animate css -->
+	<link rel="stylesheet" href="/assets/css/animate.css">
+	<!-- mean menu css -->
+	<link rel="stylesheet" href="/assets/css/meanmenu.min.css">
+	<!-- main style -->
+	<link rel="stylesheet" href="/assets/css/main.css">
+	<!-- responsive -->
+	<link rel="stylesheet" href="/assets/css/responsive.css">
+</head>
+<body>
+
+	<!-- Include header partial view -->
+	<partial name="_HeaderPartial" />
+
+	<div class="breadcrumb-section breadcrumb-bg">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8 offset-lg-2 text-center">
+					<div class="breadcrumb-text">
+						<p>We sale Nice Food</p>
+						<h1>Cart</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+<div class="cart-section mt-150 mb-150">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 col-md-12">
+				<div class="cart-table-wrap">
+					<table class="cart-table">
+						<thead class="cart-table-head">
+							<tr class="table-head-row">
+								<th class="product-remove"></th>
+								<th class="product-image">Product Image</th>
+								<th class="product-name">Name</th>
+								<th class="product-price">Price by $</th>
+								<th class="product-quantity">Quantity</th>
+									<th class="product-quantity">Total by $</th>
+							</tr>
+						</thead>
+						<tbody>
+								
+								@foreach(CustomerFoods item in Model)
+							{
+								<tr class="table-body-row" id="@item.FoodId">
+											<td class="product-remove"><a href="#" onclick="return RemoveItem(@(item.FoodId),@(Model.FirstOrDefault().CustomerId))"><i class="far fa-window-close"></i></a></td>
+									<td class="product-image"><img src=@item.Food.Image alt=""></td>
+									<td class="product-name">@item.Food.Title</td>
+										<td class="product-price" id="@item.FoodId-Price">@item.Food.Price</td>
+											<td class="product-quantity" onchange="return TotalCalc(@item.FoodId)"><input type="number" placeholder=@item.Quantity id="@item.FoodId-Quantity" min="1" max="10"></td>
+										<td class="product-total" id="@item.FoodId-total">@(item.Food.Price * item.Quantity)</td>
+								</tr>
+							}
+								
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+				<div class="col-lg-4">
+					<div class="total-section">
+						<table class="total-table">
+							<thead class="total-table-head">
+								<tr class="table-total-row">
+									<th>Total</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="total-data">
+									<td><strong>Subtotal: </strong></td>
+									<td id="Subtotal"></td>
+								</tr>
+								<tr class="total-data">
+									<td><strong>Shipping: </strong></td>
+									<td>$45</td>
+								</tr>
+								<tr class="total-data">
+									<td><strong>Total: </strong></td>
+									<td id="Total"></td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="cart-buttons">
+							<a href="/Cart/Checkout" class="boxed-btn black">Check Out</a>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+</div>
+
+	<!-- Include footer partial view -->
+	<partial name="_FooterPartial" />
+
+	<!-- Include Scripts partial view -->
+	<partial name="_ScriptsPartial" />
+
+</body>
+
+<script>
+	window.onload = function () {
+		checkCalc();
+	}
+
+	function TotalCalc(id) {
+		console.log(typeof(id));
+		var price = document.getElementById(`${id}-Price`).innerHTML;
+		var Quantity = document.getElementById(`${id}-Quantity`).value;
+		var food_total = document.getElementById(`${id}-total`);
+		var total_food_price = (price * Quantity).toFixed(2);
+		food_total.innerHTML = total_food_price;
+		checkCalc();
+		$.ajax({
+			url: `/Cart/UpdateCart?food_id=${id}&Quantity=${Quantity}&TotalPrice=${total_food_price}`
+		});
+	}
+
+	function checkCalc() {
+		var Subtotal = document.getElementById(`Subtotal`);
+		var Total = document.getElementById(`Total`);
+		var Subtotal_num = 0;
+
+		Array.prototype.forEach.call(document.getElementsByClassName("product-total"), function (element) {
+			Subtotal_num += parseFloat(element.innerHTML);
+		});
+
+		Subtotal.innerHTML = Subtotal_num.toFixed(2);
+		Total.innerHTML = (Subtotal_num + 45).toFixed(2);
+	}
+
+	function RemoveItem(id,customer) {
+		var item = document.getElementById(id);
+		item.remove();
+		$.ajax({
+			url: `/Cart/RemoveItem?customer_id=${customer}&food_id=${id}`
+		});
+		checkCalc();
+		return false;
+	}
+</script>
+
+

@@ -1,4 +1,4 @@
-﻿@model Web.ViewModels.LoginViewModel
+﻿@model LoginViewModel
 
 @{
     ViewData["Title"] = "Login";
@@ -13,7 +13,7 @@
     <meta name="description" content="">
 
     <!-- favicon -->
-    <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/img/logo-1.png">
     <!-- google font -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
@@ -78,6 +78,11 @@
                                 <input type="checkbox" class="form-check-input" id="RememberMe" asp-for="RememberMe" />
                                 <label class="form-check-label" for="RememberMe">Remember Me</label>
                             </div>
+                            
+                            <div class="form-group">
+                                <a asp-area="Admin" asp-controller="Account" asp-action="Login"><b>Login as Admin</b> <i class="fa fa-link" aria-hidden="true"></i></a>
+                            </div>
+
                             <div class="row justify-content-center">
                                <button type="submit" id="btn-boxed" class="my-3"> Login <i class="fa fa-check" aria-hidden="true"></i></button>
                             </div>
@@ -94,85 +99,7 @@
     <!-- Include Scripts partial view -->
     <partial name="_ScriptsPartial" />
 
+    <!--Login Web Module-->
+    <script src="~/modules/LoginWebModule.js"></script>
 </body>
-<script>
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        login();
-    });
-
-    function login() {
-        var email = document.getElementById('Email').value;
-        var password = document.getElementById('Password').value;
-        var rememberMe = document.getElementById('RememberMe').checked;
-
-        if (email === "" || password === "") {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Email and password are required!',
-            });
-            return;
-        }
-
-        $.ajax({
-            type: 'POST',
-            url: '/Login',
-            data: {
-                Email: email,
-                Password: password,
-                RememberMe: rememberMe
-            },
-            success: function (response) {
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Login Successfully',
-                        text: 'Welcome to NomNom Bites.',
-                    });
-                    // If login is successful, redirect to the home page
-                    window.location.href = '/Home/Index';
-                } else {
-                    // If login fails, show error message
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: response.message,
-                    });
-                }
-            },
-            error: function (xhr, status, error) {
-                // If there's an error with the AJAX request, show generic error message
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'An error occurred while processing your request.',
-                });
-            }
-        });
-    }
-
-    const container = document.getElementById('lottie-container');
-
-    if (container && typeof lottie !== 'undefined') {
-        fetch('/assets/animation/Animation_Login.json')
-            .then(response => response.json())
-            .then(animationData => {
-                const anim = lottie.loadAnimation({
-                    container: container,
-                    renderer: 'svg',
-                    loop: true,
-                    autoplay: true,
-                    animationData: animationData,
-                });
-            })
-            .catch(error => {
-                console.error('Error loading animation data:', error);
-            });
-    }
-    else {
-        console.error("Container element not found or Lottie library not loaded.");
-    }
-
-
-</script>
+</html>
