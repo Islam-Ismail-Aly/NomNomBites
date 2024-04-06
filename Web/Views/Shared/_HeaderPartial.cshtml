@@ -51,7 +51,7 @@
                                 <div class="header-icons">
                                     @if (_signInManager.IsSignedIn(User))
                                     {
-                                        <a class="shopping-cart" href="cart.html"><i class="fa fa-shopping-cart"></i></a>
+                                        <a asp-controller="Cart" asp-action="Show" class="shopping-cart"><i class="fa fa-shopping-cart"></i></a>
                                         <a class="mobile-hide search-bar-icon" href="#"><i class="fa fa-search"></i></a>
                                         <a class="welcome-msg"> Welcome, @((await _userManager.GetUserAsync(User)).Name)</a>
                                         <a asp-controller="Account" asp-Action="Profile" class="login-icon"><i class="fa fa-user-o" aria-hidden="true"></i> Profile</a>
