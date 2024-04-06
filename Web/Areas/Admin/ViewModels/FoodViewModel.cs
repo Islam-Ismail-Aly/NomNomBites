@@ -12,6 +12,6 @@ namespace Web.Areas.Admin.ViewModels
         public double Rating { get; set; }
         public bool IsAvailable { get; set; }
         public int CategoryId { get; set; }
-        public string? CategoryTitle { get; set; }
+        public string CategoryTitle { get; set; }
     }
 }

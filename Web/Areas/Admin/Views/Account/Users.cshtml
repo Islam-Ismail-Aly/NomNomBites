@@ -1,6 +1,13 @@
-﻿@model IEnumerable<VwUsers>
+﻿@inject UserManager<ApplicationUser> _userManager
+@inject SignInManager<ApplicationUser> _signInManager
+
+@model IEnumerable<VwUsers>
 @{
     ViewData["Title"] = "Roles";
+
+    var userName = await _userManager.GetUserAsync(User);
+    var roles = await _userManager.GetRolesAsync(userName);
+    var roleName = roles.FirstOrDefault();
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -76,9 +83,18 @@
                                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                     </button>
                                                     &nbsp;
-                                                    <button type="button" class="btn btn-danger btn-sm rounded-pill" onclick="Delete('@user.UserId')" value="Delete">
-                                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                                    </button>
+                                                    @if (_signInManager.IsSignedIn(User) && user.Name == (await _userManager.GetUserAsync(User)).Name)
+                                                    {
+                                                        <button type="button" class="btn btn-danger btn-sm rounded-pill disabled" onclick="Delete('@user.UserId')" value="Delete">
+                                                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="btn btn-danger btn-sm rounded-pill" onclick="Delete('@user.UserId')" value="Delete">
+                                                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                        </button>
+                                                    }
                                                 </td>
                                             </tr>
                                         }

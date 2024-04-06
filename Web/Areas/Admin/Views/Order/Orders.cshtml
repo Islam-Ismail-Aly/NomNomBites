@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<OrderViewModel>
+@{
     ViewData["Title"] = "Orders";
 }
 
@@ -12,17 +13,97 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-Action="Index">Home</a></li>
-                        <li class="breadcrumb-item active">Manage Foods</li>
+                        <li class="breadcrumb-item active">Manage orders</li>
                     </ol>
                 </div>
             </div>
         </div>
     </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Category Filter -->
+                <div class="col-md-2">
+                    <form id="categoryForm" asp-action="order" asp-controller="order" method="get">
+                        <div class="form-group">
+                            <label for="categoryFilter">Filter by Customer:</label>
+                            <select id="categoryFilter" name="categoryFilter" class="form-select">
+                                <option value="">All Categories</option>
+                                @foreach (var cust in ViewBag.Customers)
+                                {
+                                    <option value="@cust.Id">@cust.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-outline-warning rounded-3 my-2"><i class="fa fa-paper-plane" aria-hidden="true" style="font-size: 12px;"></i> Filter</button>
+                    </form>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Customer Orders</h3>
+                            <div class="card-tools">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="example2" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Price</th>
+                                        <th>Total Price</th>
+                                        <th>Quantity</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Customer</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model)
+                                    {
+                                        <tr>
+                                            <td>@order.Title</td>
+                                            <td>@order.Price</td>
+                                            <td>@order.TotalPrice</td>
+                                            <td>@order.Quantity</td>
+                                            <td>
+                                                <span class="badge badge-success"><i class="fa fa-check-circle" aria-hidden="true"> @order.Status</i></span>
+                                            </td>
+                                            <td>@order.CreationDate</td>
+                                            <td>@order.CustomerName</td>
+                                            <td>
+                                                <button type="button" class="btn btn-info btn-sm rounded-pill" onclick="Edit('@order.Id')" value="Edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                                </button>
+                                                &nbsp;
+                                                <button type="button" class="btn btn-danger btn-sm rounded-pill" onclick="Delete('@order.Id')" value="Delete">
+                                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                    @if (!Model.Any())
+                                    {
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="bg-warning-subtle p-2 rounded-square rounded-3 my-2" role="alert">
+                                                    <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+                                                    <span> No orders available</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
-
-
-
-
 
 <!-- DataTables  & Plugins -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -33,3 +114,6 @@
 <script src="~/Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
 <script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
 <script src="~/Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+
+<!-- Datatable Module -->
+<script src="~/modules/datatablemodule.js"></script>

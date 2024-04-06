@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.UnitOfWork
 {
-    public class UnitOfWork<T> : IUnitOfWork<T> where T : class
+    public class UnitOfWork<T> : IDisposable, IUnitOfWork<T> where T : class
     {
         private readonly ApplicationDbContext _context;
         private readonly IUserRepository _userRepository;

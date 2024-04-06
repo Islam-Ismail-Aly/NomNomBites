@@ -2,6 +2,7 @@
 using Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web.Areas.Admin.ViewModels;
 
 namespace Web.Areas.Admin.Controllers
 {
@@ -9,18 +10,34 @@ namespace Web.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class OrderController : Controller
     {
-        private readonly IUnitOfWork<Food> _unitOfWorkFood;
-        private readonly IUnitOfWork<Category> _unitOfWorkCategory;
+        private readonly IUnitOfWork<Customer> _unitOfWorkCustomer;
+        private readonly IUnitOfWork<Order> _unitOfWorkOrder;
 
-        public OrderController(IUnitOfWork<Food> unitOfWorkFood, IUnitOfWork<Category> unitOfWorkCategory)
+        public OrderController(IUnitOfWork<Order> unitOfWorkOrder, IUnitOfWork<Customer> unitOfWorkCustomer)
         {
-            _unitOfWorkFood = unitOfWorkFood;
-            _unitOfWorkCategory = unitOfWorkCategory;
+            _unitOfWorkCustomer = unitOfWorkCustomer;
+            _unitOfWorkOrder = unitOfWorkOrder;
         }
 
-        public IActionResult Orders()
+        public IActionResult Orders(OrderViewModel viewModel)
         {
-            return View();
+            ViewBag.Customers = _unitOfWorkCustomer.Entity.GetAll().ToList();
+
+            var orderEntities = _unitOfWorkOrder.Entity.GetAll().ToList();
+
+            var orderViewModels = orderEntities.Select(order => new OrderViewModel
+            {
+                Id = order.Id,
+                Title = order.Title,
+                Price = order.Price,
+                TotalPrice = order.Price * order.Quantity,
+                Quantity = order.Quantity,
+                Status = order.Status,
+                CreationDate = order.CreationDate,
+                CustomerName = _unitOfWorkCustomer.Entity.GetById(order.CustomerId)?.Name
+            }).ToList();
+
+            return View(orderViewModels);
         }
     }
 }
