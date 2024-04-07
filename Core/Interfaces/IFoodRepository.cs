@@ -9,6 +9,7 @@ namespace Core.Interfaces
 {
     public interface IFoodRepository:IGenericRepository<Food>
     {
-        List<Food> GetOtherFoods(int CategoryId);
+        List<Food> GetOtherTopRatedFoods(int CategoryId);
+        string GetFoodCategoryName(int CategoryId);
     }
 }

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Core.Interfaces;
 using Core.Models;
+using Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Web.Models;
@@ -13,18 +14,54 @@ namespace Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork<Food> _unitOfWork;
         private readonly IFoodRepository foodRepository;
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork<Food>unitOfWork, IFoodRepository foodRepository)
+        private readonly IUnitOfWork<Category> _Categories;
+        private readonly IUnitOfWork<Food> _Foods;
+        private readonly IUnitOfWork<CustomerFoods> _CustomerFoods;
+        private readonly ICustomerFoodsRepository _unitOfWorkCustomerFoods;
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork<Food>unitOfWork, IFoodRepository foodRepository,
+            IUnitOfWork<Category> Categories,
+            IUnitOfWork<Food> Foods,
+            IUnitOfWork<CustomerFoods> CustomerFoods,
+            ICustomerFoodsRepository unitOfWorkCustomerFoods)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             this.foodRepository = foodRepository;
+            _Foods = Foods;
+            _Categories = Categories;
+            _CustomerFoods = CustomerFoods;
+            _unitOfWorkCustomerFoods = unitOfWorkCustomerFoods;
         }
 
         public IActionResult Index()
         {
-            var foods = _unitOfWork.Entity.GetAll();
+            List<Category> categoryList = _Categories.Entity.GetAll().ToList();
+            return View("Index", categoryList);
+        }
 
-            return View("Index",foods);
+        public List<foodVM> GetFoodForCategory(int id)
+        {
+            List<foodVM> mylist = _Categories.Entity.GetById(id).Foods.Select(f => new foodVM(f.Id, f.Price, f.Title, f.Description, f.Image, f.IsAvailable)).ToList();
+            return mylist;
+        }
+
+        public List<foodVM> GetFoods()
+        {
+            List<Food> li = _Foods.Entity.GetAll().ToList();
+            List<foodVM> mylist = li.Select(f => new foodVM(f.Id, f.Price, f.Title, f.Description, f.Image, f.IsAvailable)).ToList();
+            return mylist;
+        }
+
+        public IActionResult AddFoodToCart(int foodId)
+        {
+            var _CustomerId = _unitOfWorkCustomerFoods.GetUserId(User).Result;
+            if (_unitOfWorkCustomerFoods.GetFoodByCustomerIdAndFoodId(_CustomerId, foodId) == null)
+            {
+                CustomerFoods customerFoods = new CustomerFoods { FoodId = foodId, CustomerId = _CustomerId, Quantity = 1, TotalPrice = _Foods.Entity.GetById(foodId).Price };
+                _CustomerFoods.Entity.Insert(customerFoods);
+                _CustomerFoods.Save();
+            }
+            return NoContent();
         }
 
         public IActionResult About()
@@ -45,22 +82,28 @@ namespace Web.Controllers
         {
             return View();
         }
-        public IActionResult Details(int id) {
+        public IActionResult Details(int id) 
+        {
             var Food = _unitOfWork.Entity.GetById(id);
-            var otherFoods = foodRepository.GetOtherFoods(Food.CategoryId);
-
+            var otherFoods = foodRepository.GetOtherTopRatedFoods(Food.CategoryId);
+            var _CustomerId = _unitOfWorkCustomerFoods.GetUserId(User).Result;
+            var foodInCart = (_unitOfWorkCustomerFoods.GetFoodByCustomerIdAndFoodId(_CustomerId, id)!=null)?true:false;
+            var foodCategoryName = _Categories.Entity.GetById(Food.CategoryId).Title;
             var viewModel = new FoodDetailsVM() { 
+                Id=id,
             Foods=otherFoods,
             Title=Food.Title,
+            CategoryName=foodCategoryName,
             Description=Food.Description,
             Price=Food.Price,
             Image= Food.Image,
             Rating=Food.Rating,
+            FoodInCart=foodInCart,
             IsAvailable=Food.IsAvailable,
             CategoryId=Food.CategoryId
             };
            
-            return View("Details",viewModel);
+            return View(viewModel);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -70,16 +70,32 @@
                         <p>@Model.Description</p>
                         <h5>Rating: </h5>
                         @Html.Partial("_StarRatingPartial", Model.Rating)
-                        @if (@Model.IsAvailable)
-                        {
-                            <p class="product-price"> <span style="color: green;">Available</span></p>
-                            <a href="cart.html" onclick="return true;" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+                        @{
+                            var productAvailable = "";
+                            if (Model.IsAvailable)
+                            {
+                                if (Model.FoodInCart == true)
+                                {
+                                    productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
+                                    productAvailable += "<a href='' class='cart-btn' onclick='return false;'>In Your Cart</a>";
+                                }
+                                else
+                                {
+                                    productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
+                                    productAvailable += $"<a href='' class='cart-btn' onclick='return AddFoodToCart(this,{Model.Id})'><i class='fas fa-shopping-cart'></i> Add to Cart</a>";
+
+                                }
+                            }
+                            else
+                            {
+                                productAvailable = "<h6 class='product-price' style='color: red;'>Not Available</h6>";
+                            }
                         }
-                        else
-                        {
-                            <p class="product-price"> <span style="color: red;">Not Available</span></p>
-                            <a href="cart.html" onclick="return false;" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
-                        }
+                        @Html.Raw(productAvailable)
+                        <br />
+                        <br />
+                        <input type="button" id="top" onclick="GetTopRatedFoods()" name="GetTopRated" />
+                        <h5><span class="orange-text">Category: </span> @Model.CategoryName</h5>
                         <h4>Share:</h4>
                         <ul class="product-share">
                             <li><a href=""><i class="fab fa-facebook-f"></i></a></li>
@@ -99,38 +115,16 @@
             <div class="row">
                 <div class="col-lg-8 offset-lg-2 text-center">
                     <div class="section-title">
-                        <h3><span class="orange-text">Related</span> Products</h3>
+                        <h3><span class="orange-text">Top Rated</span> Products</h3>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                @foreach (var category in Model.Foods)
-                {
-                    <div class="col-lg-4 col-md-6 text-center">
-                        <div class="single-product-item">
-                            <div class="product-image">
-                                <a href="/Home/Details/@category.Id?"><img src="@category.Image" alt=""></a>
-                            </div>
-                            <h3>@category.Title</h3>
-                            <p class="product-price"> @category.Price $ </p>
-                            @if (category.IsAvailable == true)
-                            {
-                                <p class="product-price"> <span style="color: green;">Available</span></p>
-                                <a href="cart.html" onclick="return true;" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
-                            }
-                            else
-                            {
-                                <p class="product-price"> <span style="color: red;">Not Available</span></p>
-                                <a href="cart.html" onclick="return false;" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
-                            }
-                        </div>
-                    </div>
-                }
-            </div>
+            <div class="row" id="Foods">
             </div>
         </div>
-    <!-- end more products -->
 
+    </div>
+    <!-- end more products -->
     <!-- logo carousel -->
     <br />
     <br />
@@ -164,9 +158,54 @@
     <!-- end logo carousel -->
     <!-- Include footer partial view -->
     <partial name="_FooterPartial" />
-
-    <!-- Include Scripts partial view -->
     <partial name="_ScriptsPartial" />
 
-</body>
+    <!-- Include Scripts partial view -->
+    <script>
+        function GetTopRatedFoods() {
+            var Foods = @Model.Foods; // Ensure this Model object is properly defined and passed to the view
+            console.log(Foods);
+            var foodRow = document.getElementById("Foods");
+            $.ajax({
+                url: `/Cart/FoodsInCustomerCart`,
+                type: 'GET',
+                success: function (FoodsInCart) {
+                    foodRow.innerHTML = "";
+                    Foods.forEach(function (food) {
+                        var productAvailable = ""; // Declare productAvailable here
+                        if (food.isAvailable) {
+                            if (FoodsInCart.includes(food.id)) {
+                                productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
+                                productAvailable += "<a href='' class='cart-btn' onclick='return false;'>In Your Cart</a>";
+                            } else {
+                                productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
+                                productAvailable += "<a class='cart-btn' onclick='return AddFoodToCart(this," + food.id + ")'><i class='fas fa-shopping-cart'></i> Add to Cart</a>";
+                            }
+                        } else {
+                            productAvailable = "<h6 class='product-price' style='color: red;'>Not Available</h6>";
+                        }
+                        // Create productHTML
+                        var productHTML = '<div class="col-lg-4 col-md-6 text-center">' +
+                            '<div class="single-product-item">' +
+                            '<div class="product-image">' +
+                            '<a href="/Home/Details/' + food.id + '">' +
+                            '<img src="' + food.image + '" alt="' + food.title + '">' +
+                            '</a>' +
+                            '</div>' +
+                            '<h3>' + food.title + '</h3>' +
+                            '<p class="product-price">' + food.price + '$</p>' +
+                            productAvailable +
+                            '</div>' +
+                            '</div>';
 
+                        // Append productHTML to foodRow
+                        foodRow.innerHTML += productHTML;
+                    });
+                },
+                error: function (error) { }
+            });
+        }
+    </script>
+
+</body>
+</html>

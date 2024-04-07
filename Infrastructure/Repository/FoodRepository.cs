@@ -19,16 +19,21 @@ namespace Infrastructure.Repository
             Context = context;
         }
 
-        public List<Food> GetOtherFoods(int CategoryId)
+        public List<Food> GetOtherTopRatedFoods(int CategoryId)
         {
             var otherFoods = Context.Foods
        .Where(f => f.CategoryId != CategoryId)
        .OrderBy(f => f.CategoryId) // Ensure ordering before grouping
        .ThenBy(f => f.Id)          // Secondary ordering to ensure consistency
        .GroupBy(f => f.CategoryId)
-       .Select(group => group.First())
+       .Select(group => group.OrderByDescending(f => f.Rating).First())
        .ToList();
             return otherFoods;
+        }
+        public string GetFoodCategoryName(int CategoryId)
+        {
+            var foodCategoryName = Context.Categories.Where(c=>c.Id== CategoryId).FirstOrDefault().Title;
+            return foodCategoryName;
         }
     }
 }
