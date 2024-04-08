@@ -3,6 +3,8 @@ using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging.Signing;
 using System.Diagnostics;
 using Web.Models;
 using Web.ViewModels;
@@ -18,7 +20,7 @@ namespace Web.Controllers
         private readonly IUnitOfWork<Food> _Foods;
         private readonly IUnitOfWork<CustomerFoods> _CustomerFoods;
         private readonly ICustomerFoodsRepository _unitOfWorkCustomerFoods;
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork<Food>unitOfWork, IFoodRepository foodRepository,
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork<Food> unitOfWork, IFoodRepository foodRepository,
             IUnitOfWork<Category> Categories,
             IUnitOfWork<Food> Foods,
             IUnitOfWork<CustomerFoods> CustomerFoods,
@@ -82,28 +84,49 @@ namespace Web.Controllers
         {
             return View();
         }
-        public IActionResult Details(int id) 
+        public IActionResult Details(int id)
         {
             var Food = _unitOfWork.Entity.GetById(id);
-            var otherFoods = foodRepository.GetOtherTopRatedFoods(Food.CategoryId);
+            //var otherFoods = foodRepository.GetOtherTopRatedFoods(Food.CategoryId);
             var _CustomerId = _unitOfWorkCustomerFoods.GetUserId(User).Result;
-            var foodInCart = (_unitOfWorkCustomerFoods.GetFoodByCustomerIdAndFoodId(_CustomerId, id)!=null)?true:false;
-            var foodCategoryName = _Categories.Entity.GetById(Food.CategoryId).Title;
-            var viewModel = new FoodDetailsVM() { 
-                Id=id,
-            Foods=otherFoods,
-            Title=Food.Title,
-            CategoryName=foodCategoryName,
-            Description=Food.Description,
-            Price=Food.Price,
-            Image= Food.Image,
-            Rating=Food.Rating,
-            FoodInCart=foodInCart,
-            IsAvailable=Food.IsAvailable,
-            CategoryId=Food.CategoryId
+            var foodInCart = (_unitOfWorkCustomerFoods.GetFoodByCustomerIdAndFoodId(_CustomerId, id) != null) ? true : false;
+            //var foodCategoryName = _Categories.Entity.GetById(Food.CategoryId).Title;
+            var viewModel = new FoodDetailsVM()
+            {
+                Id = id,
+                Title = Food.Title,
+                //CategoryName = Food.Category.Title,
+                Description = Food.Description,
+                Price = Food.Price,
+                Image = Food.Image,
+                Rating = Food.Rating,
+                FoodInCart = foodInCart,
+                IsAvailable = Food.IsAvailable,
+                CategoryId = Food.CategoryId
             };
-           
+
+            //ViewBag.Foods = foodRepository.GetOtherTopRatedFoods(Food.CategoryId);
+
             return View(viewModel);
+        }
+
+        [HttpGet]
+        public IActionResult GetFoodByCategoryId(int id)
+        {
+            var foodByCategoryId = foodRepository.GetFoodByCategoryId(id)
+                .Select(f => new FoodSameCategoryViewModel
+                {
+                    Id = f.Id,
+                    Title = f.Title,
+                    Description = f.Description,
+                    Price = f.Price,
+                    Image = f.Image,
+                    Rating = f.Rating,
+                    IsAvailable = f.IsAvailable
+                })
+            .ToList();
+
+            return Json(foodByCategoryId);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

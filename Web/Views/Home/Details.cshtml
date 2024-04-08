@@ -94,7 +94,7 @@
                         @Html.Raw(productAvailable)
                         <br />
                         <br />
-                        <input type="button" id="top" onclick="GetTopRatedFoods()" name="GetTopRated" />
+                        @* <input type="button" id="top" onload="GetTopRatedFoods(@Model.CategoryId)" name="GetTopRated" value="Get Top Rated" /> *@
                         <h5><span class="orange-text">Category: </span> @Model.CategoryName</h5>
                         <h4>Share:</h4>
                         <ul class="product-share">
@@ -115,7 +115,7 @@
             <div class="row">
                 <div class="col-lg-8 offset-lg-2 text-center">
                     <div class="section-title">
-                        <h3><span class="orange-text">Top Rated</span> Products</h3>
+                        <h3><span class="orange-text">Related </span>Foods</h3>
                     </div>
                 </div>
             </div>
@@ -162,23 +162,22 @@
 
     <!-- Include Scripts partial view -->
     <script>
-        function GetTopRatedFoods() {
-            var Foods = @Model.Foods; // Ensure this Model object is properly defined and passed to the view
-            console.log(Foods);
+
+        function GetTopRatedFoods(id) {
             var foodRow = document.getElementById("Foods");
             $.ajax({
-                url: `/Cart/FoodsInCustomerCart`,
+                url: '/Home/GetFoodByCategoryId?id=' + id,
                 type: 'GET',
-                success: function (FoodsInCart) {
-                    foodRow.innerHTML = "";
-                    Foods.forEach(function (food) {
-                        var productAvailable = ""; // Declare productAvailable here
-                        if (food.isAvailable) {
-                            if (FoodsInCart.includes(food.id)) {
-                                productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
+                success: function (foods) {
+                    foodRow.innerHTML = ""; // Clear previous content
+                    foods.forEach(function (food) {
+                        console.log(food);
+                        var productAvailable = "";
+                        if (food.isAvailable === true) {
+                            productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
+                            if (foods.includes(food.id)) {
                                 productAvailable += "<a href='' class='cart-btn' onclick='return false;'>In Your Cart</a>";
                             } else {
-                                productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
                                 productAvailable += "<a class='cart-btn' onclick='return AddFoodToCart(this," + food.id + ")'><i class='fas fa-shopping-cart'></i> Add to Cart</a>";
                             }
                         } else {
@@ -202,9 +201,18 @@
                         foodRow.innerHTML += productHTML;
                     });
                 },
-                error: function (error) { }
+                error: function (error) {
+                    console.error('Error fetching foods:', error);
+                }
             });
         }
+
+        window.onload = function () {
+            var categoryId = @Html.Raw(Json.Serialize(Model.CategoryId));
+            console.log(categoryId);
+            GetTopRatedFoods(categoryId);
+        };
+
     </script>
 
 </body>

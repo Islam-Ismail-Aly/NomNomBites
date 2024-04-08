@@ -165,83 +165,85 @@ namespace Web.Controllers
             return View();
         }
 
-        public IActionResult ExternalLogin(string provider)
-        {
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, "/Account/ExternalResponse");
+        #region External Logins | Not Completed
+        //public IActionResult ExternalLogin(string provider)
+        //{
+        //    var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, "/Account/ExternalResponse");
 
-            return Challenge(properties, provider);
-        }
+        //    return Challenge(properties, provider);
+        //}
 
-        public async Task<IActionResult> ExternalResponse()
-        {
-            // Get the external login info
-            var info = await _signInManager.GetExternalLoginInfoAsync();
+        //public async Task<IActionResult> ExternalResponse()
+        //{
+        //    // Get the external login info
+        //    var info = await _signInManager.GetExternalLoginInfoAsync();
 
-            if (info == null)
-            {
-                // Redirect to some error page or handle as needed
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
+        //    if (info == null)
+        //    {
+        //        // Redirect to some error page or handle as needed
+        //        return RedirectToAction(nameof(HomeController.Index), "Home");
+        //    }
 
-            // Attempt to sign in the user with the external provider
-            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+        //    // Attempt to sign in the user with the external provider
+        //    var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
 
-            if (result.Succeeded)
-            {
-                // Redirect to the appropriate page after successful login
-                return RedirectToAction(nameof(Profile));
-            }
-            else
-            {
-                // If the user doesn't have an account, create a new one
-                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                var name = info.Principal.FindFirstValue(ClaimTypes.Name);
-                var address = info.Principal.FindFirstValue(ClaimTypes.Country);
+        //    if (result.Succeeded)
+        //    {
+        //        // Redirect to the appropriate page after successful login
+        //        return RedirectToAction(nameof(Profile));
+        //    }
+        //    else
+        //    {
+        //        // If the user doesn't have an account, create a new one
+        //        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        //        var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+        //        var address = info.Principal.FindFirstValue(ClaimTypes.Country);
 
-                var user = new ApplicationUser
-                {
-                    Name = name,
-                    UserName = email,
-                    Address = address
-                };
+        //        var user = new ApplicationUser
+        //        {
+        //            Name = name,
+        //            UserName = email,
+        //            Address = address
+        //        };
 
-                var createResult = await _userManager.CreateAsync(user);
+        //        var createResult = await _userManager.CreateAsync(user);
 
-                if (createResult.Succeeded)
-                {
-                    var externalLoginResult = await _userManager.AddLoginAsync(user, info);
-                    if (externalLoginResult.Succeeded)
-                    {
-                        await _signInManager.SignInAsync(user, false, info.LoginProvider);
-                        return RedirectToAction(nameof(HomeController.Index), nameof(Index));
-                    }
-                    var customer = new Customer
-                    {
-                        Name = name,
-                        Address = user.Address,
-                        Phone = user.PhoneNumber,
-                        City = user.Address,
-                        Status = true,
-                        CreationDate = DateTime.UtcNow,
-                        ApplicationUserId = user.Id,
-                    };
+        //        if (createResult.Succeeded)
+        //        {
+        //            var externalLoginResult = await _userManager.AddLoginAsync(user, info);
+        //            if (externalLoginResult.Succeeded)
+        //            {
+        //                await _signInManager.SignInAsync(user, false, info.LoginProvider);
+        //                return RedirectToAction(nameof(HomeController.Index), nameof(Index));
+        //            }
+        //            var customer = new Customer
+        //            {
+        //                Name = name,
+        //                Address = user.Address,
+        //                Phone = user.PhoneNumber,
+        //                City = user.Address,
+        //                Status = true,
+        //                CreationDate = DateTime.UtcNow,
+        //                ApplicationUserId = user.Id,
+        //            };
 
-                    _customer.Entity.Insert(customer);
+        //            _customer.Entity.Insert(customer);
 
-                    _customer.Save();
+        //            _customer.Save();
 
-                    await _userManager.AddToRoleAsync(user, "Customer");
+        //            await _userManager.AddToRoleAsync(user, "Customer");
 
-                    return Json(new { success = true });
-                }
-                else
-                {
-                    // Handle user creation failure
-                    // You may choose to redirect to an error page or handle differently
-                }
+        //            return Json(new { success = true });
+        //        }
+        //        else
+        //        {
+        //            // Handle user creation failure
+        //            // You may choose to redirect to an error page or handle differently
+        //        }
 
-                return RedirectToAction(nameof(Register));
-            }
-        }
+        //        return RedirectToAction(nameof(Register));
+        //    }
+        //} 
+        #endregion
     }
 }

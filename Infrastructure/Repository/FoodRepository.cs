@@ -2,6 +2,7 @@
 using Core.Models;
 using Infrastructure.Data;
 using Infrastructure.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Infrastructure.Repository
     {
         ApplicationDbContext Context;
 
-        public FoodRepository(ApplicationDbContext context):base(context)
+        public FoodRepository(ApplicationDbContext context) : base(context)
         {
             Context = context;
         }
@@ -22,18 +23,27 @@ namespace Infrastructure.Repository
         public List<Food> GetOtherTopRatedFoods(int CategoryId)
         {
             var otherFoods = Context.Foods
-       .Where(f => f.CategoryId != CategoryId)
-       .OrderBy(f => f.CategoryId) // Ensure ordering before grouping
-       .ThenBy(f => f.Id)          // Secondary ordering to ensure consistency
-       .GroupBy(f => f.CategoryId)
-       .Select(group => group.OrderByDescending(f => f.Rating).First())
-       .ToList();
+                                    .Where(f => f.CategoryId != CategoryId)
+                                    .OrderBy(f => f.CategoryId) // Ensure ordering before grouping
+                                    .ThenBy(f => f.Id)          // Secondary ordering to ensure consistency
+                                    .GroupBy(f => f.CategoryId)
+                                    .Select(group => group.OrderByDescending(f => f.Rating).First())
+                                    .ToList();
             return otherFoods;
         }
         public string GetFoodCategoryName(int CategoryId)
         {
-            var foodCategoryName = Context.Categories.Where(c=>c.Id== CategoryId).FirstOrDefault().Title;
+            var foodCategoryName = Context.Categories.Where(c => c.Id == CategoryId).FirstOrDefault().Title;
             return foodCategoryName;
+        }
+
+        public List<Food> GetFoodByCategoryId(int id)
+        {
+            var foods = Context.Foods
+            .Where(f => f.CategoryId == id)
+            .ToList();
+
+            return foods;
         }
     }
 }

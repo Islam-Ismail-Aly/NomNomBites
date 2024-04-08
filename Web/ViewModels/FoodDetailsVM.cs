@@ -14,7 +14,7 @@ namespace Web.ViewModels
         public string CategoryName { get; set; }
         public bool IsAvailable { get; set; }
         public bool FoodInCart {  get; set; }
-        public List<Food>? Foods { get; set; }
+        public List<Food>? Foods { get; set; } = new List<Food>();
 
     }
 }
