@@ -37,10 +37,11 @@ namespace Infrastructure.Repository
             return foodCategoryName;
         }
 
-        public List<Food> GetFoodByCategoryId(int id)
+        public List<Food> GetFoodByFoodId(int id)
         {
+            var food = Context.Foods.Where(fo => fo.Id == id).FirstOrDefault();
             var foods = Context.Foods
-            .Where(f => f.CategoryId == id)
+            .Where(f => (f.CategoryId ==food.CategoryId && f.Id!=food.Id) )
             .ToList();
 
             return foods;

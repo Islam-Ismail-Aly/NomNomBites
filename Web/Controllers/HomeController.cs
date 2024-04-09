@@ -90,12 +90,12 @@ namespace Web.Controllers
             //var otherFoods = foodRepository.GetOtherTopRatedFoods(Food.CategoryId);
             var _CustomerId = _unitOfWorkCustomerFoods.GetUserId(User).Result;
             var foodInCart = (_unitOfWorkCustomerFoods.GetFoodByCustomerIdAndFoodId(_CustomerId, id) != null) ? true : false;
-            //var foodCategoryName = _Categories.Entity.GetById(Food.CategoryId).Title;
+            var foodCategoryName = _Categories.Entity.GetById(Food.CategoryId).Title;
             var viewModel = new FoodDetailsVM()
             {
                 Id = id,
                 Title = Food.Title,
-                //CategoryName = Food.Category.Title,
+                CategoryName = foodCategoryName,
                 Description = Food.Description,
                 Price = Food.Price,
                 Image = Food.Image,
@@ -111,9 +111,9 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetFoodByCategoryId(int id)
+        public IActionResult GetFoodByFoodId(int id)
         {
-            var foodByCategoryId = foodRepository.GetFoodByCategoryId(id)
+            var foodByCategoryId = foodRepository.GetFoodByFoodId(id)
                 .Select(f => new FoodSameCategoryViewModel
                 {
                     Id = f.Id,

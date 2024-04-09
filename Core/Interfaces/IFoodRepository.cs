@@ -11,6 +11,6 @@ namespace Core.Interfaces
     {
         List<Food> GetOtherTopRatedFoods(int CategoryId);
         string GetFoodCategoryName(int CategoryId);
-        public List<Food> GetFoodByCategoryId(int id);
+        public List<Food> GetFoodByFoodId(int id);
     }
 }

@@ -166,7 +166,7 @@
         function GetTopRatedFoods(id) {
             var foodRow = document.getElementById("Foods");
             $.ajax({
-                url: '/Home/GetFoodByCategoryId?id=' + id,
+                url: '/Home/GetFoodByFoodId?id=' + id,
                 type: 'GET',
                 success: function (foods) {
                     foodRow.innerHTML = ""; // Clear previous content
@@ -208,10 +208,18 @@
         }
 
         window.onload = function () {
-            var categoryId = @Html.Raw(Json.Serialize(Model.CategoryId));
-            console.log(categoryId);
-            GetTopRatedFoods(categoryId);
+            var foodId = @Html.Raw(Json.Serialize(Model.Id));
+            console.log(foodId);
+            GetTopRatedFoods(foodId);
         };
+        function AddFoodToCart(anchor, id) {
+            anchor.disabled = true;
+            anchor.innerHTML = "In Your Cart";
+            $.ajax({
+                url: `/Home/AddFoodToCart?foodId=${id}`,
+            });
+            return false;
+        }
 
     </script>
 
