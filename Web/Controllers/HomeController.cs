@@ -43,14 +43,14 @@ namespace Web.Controllers
 
         public List<foodVM> GetFoodForCategory(int id)
         {
-            List<foodVM> mylist = _Categories.Entity.GetById(id).Foods.Select(f => new foodVM(f.Id, f.Price, f.Title, f.Description, f.Image, f.IsAvailable)).ToList();
+            List<foodVM> mylist = _Categories.Entity.GetById(id).Foods.Select(f => new foodVM(f.Id, f.Price, f.Title, f.Rating, f.Image, f.IsAvailable)).ToList();
             return mylist;
         }
 
         public List<foodVM> GetFoods()
         {
             List<Food> li = _Foods.Entity.GetAll().ToList();
-            List<foodVM> mylist = li.Select(f => new foodVM(f.Id, f.Price, f.Title, f.Description, f.Image, f.IsAvailable)).ToList();
+            List<foodVM> mylist = li.Select(f => new foodVM(f.Id, f.Price, f.Title, f.Rating, f.Image, f.IsAvailable)).ToList();
             return mylist;
         }
 

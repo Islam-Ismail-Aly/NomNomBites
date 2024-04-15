@@ -62,7 +62,9 @@
                         type: 'GET',
                         success: function (FoodsInCart) {
                             foodRow.innerHTML = "";
+                            
                             CategoryFoods.forEach(function (food) {
+                                console.log(food.rating);
                                 if (food.isAvailable) {
                                     if (FoodsInCart.includes(food.id)) {
                                         var productAvailable = "<h6 class='product-price' style='color: green;' >  Available  </h6 >";
@@ -76,6 +78,8 @@
                                 else {
                                     var productAvailable = "<h6 class='product-price' style='color: red;' >Not Available </h6 >";
                                 }
+                                var starsHTML = generateStarRatings(food.rating);
+
                                 var productHTML = `<div class="col-lg-4 col-md-6 text-center">
                                                                             <div class="single-product-item">
                                                                                 <div class="product-image">
@@ -85,6 +89,8 @@
                                                                                     </div>
                                                                                     <h3> ${food.title} </h3>
                                                                                     <p class="product-price" > ${food.price} $ </p>
+                                                                                           ${starsHTML}
+
                                                                                          ${productAvailable}
                                                                                 </div>
                                                                               </div>`;
@@ -126,7 +132,7 @@
                                 else{
                                     var productAvailable = "<h6 class='product-price' style='color: red;' >Not Available </h6 >";
                                     }
-
+                                var starsHTML = generateStarRatings(food.rating);
                                 var productHTML = `<div class="col-lg-4 col-md-6 text-center">
                                                                         <div class="single-product-item">
                                                                             <div class="product-image">
@@ -136,8 +142,9 @@
                                                                                 </div>
                                                                                 <h3> ${food.title} </h3>
                                                                                 <p class="product-price" > ${food.price} $ </p>
+                                                                                    ${starsHTML}
                                                                                      ${productAvailable}
-                                                                            </div>
+                                                                     </div>
                                                                           </div>`;
                                 foodRow.innerHTML += productHTML
                             })
@@ -162,4 +169,25 @@
         });
         return false;
     }
+    function generateStarRatings(rating) {
+        var fullStars = Math.floor(rating);
+        var halfStar = rating - fullStars >= 0.5 ? 1 : 0;
+        var emptyStars = 5 - fullStars - halfStar;
+
+        var starsHTML = "";
+        for (var i = 0; i < fullStars; i++) {
+            starsHTML += '<i class="fas fa-star" style="color: gold;"></i>';
+        }
+
+        if (halfStar > 0) {
+            starsHTML += '<i class="fas fa-star-half-alt" style="color: gold;"></i>';
+        }
+
+        for (var i = 0; i < emptyStars; i++) {
+            starsHTML += '<i class="far fa-star" style="color: gold;"></i>';
+        }
+
+        return starsHTML;
+    }
+
         </script>
