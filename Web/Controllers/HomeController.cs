@@ -1,6 +1,7 @@
 using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Repository;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -87,5 +88,25 @@ namespace Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpGet]
+        public ActionResult Pagenation([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            List<foodVM> foodsVM = _Foods.Entity.GetAll().Select(f => new foodVM
+            {
+                id = f.Id,
+                Title = f.Title,
+                Description = f.Description,
+                Price = f.Price,
+                Image = f.Image,
+                IsAvailable = f.IsAvailable
+            }).ToList();
+
+            var totalCount = foodsVM.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            foodsVM = foodsVM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            return Ok(foodsVM);
+        }
+
     }
 }

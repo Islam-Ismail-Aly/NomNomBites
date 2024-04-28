@@ -13,6 +13,12 @@ namespace Web.Validators
             {
                 context.Result = new RedirectResult("/Home/Index");
             }
+            else if (!context.HttpContext.User.Identity.IsAuthenticated &&
+                (context.HttpContext.Request.Path.StartsWithSegments("/Cart/Show") ||
+                 context.HttpContext.Request.Path.StartsWithSegments("/Cart/Checkout")))
+            {
+                context.Result = new RedirectResult("/Account/Login");
+            }
             else
             {
                 base.OnActionExecuting(context);

@@ -24,7 +24,7 @@ namespace Web
 
             // Configure the connection string
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

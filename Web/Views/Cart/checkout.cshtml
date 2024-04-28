@@ -105,7 +105,7 @@
 								@foreach (CustomerFoods item in Model)
 								{
 									<tr>
-										<td>@(item.Food.Title)&nbsp;&nbsp;&nbsp;x@(item.Quantity)</td>
+										<td>@(item.Food.Title)&nbsp;&nbsp;&nbsp;x@(item.Quantity) (@(item.Food.Price) $)</td>
 										<td>$@(item.TotalPrice)</td>
 									</tr>
 								}

@@ -3,8 +3,12 @@ using Core.Models;
 using Core.Interfaces;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
+using Web.Validators;
+using Microsoft.AspNetCore.Authorization;
 namespace Web.Controllers
 {
+    [AuthenticatedUsersAttribute]
+	
     public class CartController : Controller
     {
 		
