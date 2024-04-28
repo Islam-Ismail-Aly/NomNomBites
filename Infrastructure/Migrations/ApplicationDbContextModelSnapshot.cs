@@ -111,7 +111,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.Customer", b =>
@@ -126,6 +126,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ApplicationUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("City")
@@ -148,7 +149,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.CustomerFoods", b =>
@@ -169,7 +170,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("CustomerFoods");
+                    b.ToTable("CustomerFoods", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.CustomerOrderPayment", b =>
@@ -189,7 +190,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PaymentId");
 
-                    b.ToTable("CustomerOrderPayments");
+                    b.ToTable("CustomerOrderPayments", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.Food", b =>
@@ -228,7 +229,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Foods");
+                    b.ToTable("Foods", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.FoodOrders", b =>
@@ -241,7 +242,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("FoodId", "OrderId");
 
-                    b.ToTable("FoodOrders");
+                    b.ToTable("FoodOrders", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.Order", b =>
@@ -278,7 +279,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.Payment", b =>
@@ -309,7 +310,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.VwUsers", b =>
@@ -363,7 +364,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("FoodOrdersFoodId", "FoodOrdersOrderId");
 
-                    b.ToTable("FoodFoodOrders");
+                    b.ToTable("FoodFoodOrders", (string)null);
                 });
 
             modelBuilder.Entity("FoodOrdersOrder", b =>
@@ -381,7 +382,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("FoodOrdersFoodId", "FoodOrdersOrderId");
 
-                    b.ToTable("FoodOrdersOrder");
+                    b.ToTable("FoodOrdersOrder", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -521,7 +522,9 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Core.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUser");
                 });

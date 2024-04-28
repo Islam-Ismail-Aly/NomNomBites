@@ -1,0 +1,249 @@
+﻿@using Web.ViewModels
+@model FoodDetailsVM
+@{
+    ViewData["Title"] = "Details";
+    Layout = "";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="/assets/css/all.min.css">
+    <!-- bootstrap -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- owl carousel -->
+    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
+    <!-- magnific popup -->
+    <link rel="stylesheet" href="/assets/css/magnific-popup.css">
+    <!-- animate css -->
+    <link rel="stylesheet" href="/assets/css/animate.css">
+    <!-- mean menu css -->
+    <link rel="stylesheet" href="/assets/css/meanmenu.min.css">
+    <!-- main style -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <!-- responsive -->
+    <link rel="stylesheet" href="/assets/css/responsive.css">
+</head>
+<body>
+
+    <!-- Include header partial view -->
+    <partial name="_HeaderPartial" />
+
+    <!-- breadcrumb-section -->
+    <div class="breadcrumb-section breadcrumb-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="breadcrumb-text">
+                        <p>See More Details </p>
+                        <h1>Single Product</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- single product -->
+    <div class="single-product mt-150 mb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="single-product-img">
+                        <img src="@Model.Image" alt="">
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="single-product-content">
+                        <h3>@Model.Title</h3>
+                        <p class="single-product-pricing">$ @Model.Price</p>
+                        <p>@Model.Description</p>
+                        <h5>Rating: </h5>
+                        @Html.Partial("_StarRatingPartial", Model.Rating)
+                        @{
+                            var productAvailable = "";
+                            if (Model.IsAvailable)
+                            {
+                                if (Model.FoodInCart == true)
+                                {
+                                    productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
+                                    productAvailable += "<a href='' class='cart-btn' onclick='return false;'>In Your Cart</a>";
+                                }
+                                else
+                                {
+                                    productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
+                                    productAvailable += $"<a href='' class='cart-btn' onclick='return AddFoodToCart(this,{Model.Id})'><i class='fas fa-shopping-cart'></i> Add to Cart</a>";
+
+                                }
+                            }
+                            else
+                            {
+                                productAvailable = "<h6 class='product-price' style='color: red;'>Not Available</h6>";
+                            }
+                        }
+                        @Html.Raw(productAvailable)
+                        <br />
+                        <br />
+                        @* <input type="button" id="top" onload="GetTopRatedFoods(@Model.CategoryId)" name="GetTopRated" value="Get Top Rated" /> *@
+                        <h5><span class="orange-text">Category: </span> @Model.CategoryName</h5>
+                        <h4>Share:</h4>
+                        <ul class="product-share">
+                            <li><a href=""><i class="fab fa-facebook-f"></i></a></li>
+                            <li><a href=""><i class="fab fa-twitter"></i></a></li>
+                            <li><a href=""><i class="fab fa-google-plus-g"></i></a></li>
+                            <li><a href=""><i class="fab fa-linkedin"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end single product -->
+    <!-- more products -->
+    <div class="more-products mb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="section-title">
+                        <h3><span class="orange-text">Related </span>Foods</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="Foods">
+            </div>
+        </div>
+
+    </div>
+    <!-- end more products -->
+    <!-- logo carousel -->
+    <br />
+    <br />
+    <br />
+    <div class="logo-carousel-section">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="logo-carousel-inner">
+                        <div class="single-logo-item">
+                            <img src="/assets/img/company-logos/1.png" alt="">
+                        </div>
+                        <div class="single-logo-item">
+                            <img src="/assets/img/company-logos/2.png" alt="">
+                        </div>
+                        <div class="single-logo-item">
+                            <img src="/assets/img/company-logos/3.png" alt="">
+                        </div>
+                        <div class="single-logo-item">
+                            <img src="/assets/img/company-logos/4.png" alt="">
+                        </div>
+                        <div class="single-logo-item">
+                            <img src="/assets/img/company-logos/5.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end logo carousel -->
+    <!-- Include footer partial view -->
+    <partial name="_FooterPartial" />
+    <partial name="_ScriptsPartial" />
+
+    <!-- Include Scripts partial view -->
+    <script>
+
+        function GetTopRatedFoods(id) {
+            var foodRow = document.getElementById("Foods");
+            $.ajax({
+                url: '/Home/GetFoodByFoodId?id=' + id,
+                type: 'GET',
+                success: function (foods) {
+                    foodRow.innerHTML = ""; // Clear previous content
+                    foods.forEach(function (food) {
+                        console.log(food);
+                        var productAvailable = "";
+                        if (food.isAvailable === true) {
+                            productAvailable = "<h6 class='product-price' style='color: green;'>Available</h6>";
+                            if (foods.includes(food.id)) {
+                                productAvailable += "<a href='' class='cart-btn' onclick='return false;'>In Your Cart</a>";
+                            } else {
+                                productAvailable += "<a class='cart-btn' onclick='return AddFoodToCart(this," + food.id + ")'><i class='fas fa-shopping-cart'></i> Add to Cart</a>";
+                            }
+                        } else {
+                            productAvailable = "<h6 class='product-price' style='color: red;'>Not Available</h6>";
+                        }
+                        var starsHTML = generateStarRatings(food.rating);
+
+                        // Create productHTML
+                        var productHTML = '<div class="col-lg-4 col-md-6 text-center">' +
+                            '<div class="single-product-item">' +
+                            '<div class="product-image">' +
+                            '<a href="/Home/Details/' + food.id + '">' +
+                            '<img src="' + food.image + '" alt="' + food.title + '">' +
+                            '</a>' +
+                            '</div>' +
+                            '<h3>' + food.title + '</h3>' +
+                            '<p class="product-price">' + food.price + '$</p>' +
+                            starsHTML+
+                            productAvailable +
+                            '</div>' +
+                            '</div>';
+
+                        // Append productHTML to foodRow
+                        foodRow.innerHTML += productHTML;
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching foods:', error);
+                }
+            });
+        }
+
+        window.onload = function () {
+            var foodId = @Html.Raw(Json.Serialize(Model.Id));
+            console.log(foodId);
+            GetTopRatedFoods(foodId);
+        };
+        function AddFoodToCart(anchor, id) {
+            anchor.disabled = true;
+            anchor.innerHTML = "In Your Cart";
+            $.ajax({
+                url: `/Home/AddFoodToCart?foodId=${id}`,
+            });
+            return false;
+        }
+        function generateStarRatings(rating) {
+            var fullStars = Math.floor(rating);
+            var halfStar = rating - fullStars >= 0.5 ? 1 : 0;
+            var emptyStars = 5 - fullStars - halfStar;
+
+            var starsHTML = "";
+            for (var i = 0; i < fullStars; i++) {
+                starsHTML += '<i class="fas fa-star" style="color: gold;"></i>';
+            }
+
+            if (halfStar > 0) {
+                starsHTML += '<i class="fas fa-star-half-alt" style="color: gold;"></i>';
+            }
+
+            for (var i = 0; i < emptyStars; i++) {
+                starsHTML += '<i class="far fa-star" style="color: gold;"></i>';
+            }
+
+            return starsHTML;
+        }
+    </script>
+
+</body>
+</html>
